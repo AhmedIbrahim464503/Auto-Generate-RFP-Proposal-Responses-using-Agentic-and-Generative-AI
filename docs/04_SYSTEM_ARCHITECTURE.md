@@ -21,3 +21,8 @@ graph TD
     API --> Orchestrator[Agent Orchestrator]
     Orchestrator --> LLM[LLM / Gemini API]
 ```
+
+## Phase 3 Ingestion Pipeline & Storage
+- Implemented `LocalStorageService` implementing `StorageInterface` to encapsulate document writes to local directory, enabling future migration to AWS S3/Azure Blob.
+- Integrated `PDFProcessor` (via PyMuPDF) and `DOCXProcessor` (via python-docx) resolved dynamically by `DocumentProcessorFactory`.
+- Created structured upload APIs processing mime validations, page/word count extractions, and relational DB status logging.
