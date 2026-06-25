@@ -8,3 +8,8 @@
 ## CI/CD Pipeline
 - Automated unit tests and lint checks.
 - Build Docker images and push to secure container registries.
+
+## Phase 1 Deployment Setup
+- Defined root-level multi-container orchestration in `docker-compose.yml` linking FastAPI and PostgreSQL.
+- Formulated containerization template `backend/Dockerfile` using modular slim-python layers.
+- Established active GitHub Actions workflow at `.github/workflows/ci.yml` verifying linting, dependency compilation, and testing suites.
