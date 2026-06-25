@@ -11,3 +11,4 @@ This project aims to automate the generation of RFP responses via Generative AI 
 - Modern, fast, and responsive user interface.
 - High retrieval relevance using hybrid search.
 - Clean separation of parser, retriever, writer, and compliance/reviewer agents.
+- **Contract-First & Strictly Typed**: Fully defined relational SQLAlchemy tables, structured Pydantic input/output schemas (`AgentOutput`), and GraphState.

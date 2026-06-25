@@ -8,4 +8,9 @@
 - [x] Setup Next.js 15 Tailwind theme, Zustand store, and API services template.
 - [x] Formulated Pytest/Vitest testing suites and GitHub Actions CI workflow config.
 - [x] Root multi-container Docker Compose setup.
+- [x] Defined database schemas and SQLAlchemy mappings for all 22 domain entities.
+- [x] Generated Alembic database migration scripts for database tables.
+- [x] Designed structured GraphState for LangGraph orchestration.
+- [x] Implemented Pydantic models for Agent output contracts and REST API requests/responses.
+- [x] Configured Pydantic verification unit tests (6/6 tests passing).
 

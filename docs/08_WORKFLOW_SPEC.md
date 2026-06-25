@@ -16,3 +16,11 @@ sequenceDiagram
     Writer->>Reviewer: Draft Answer
     Reviewer->>User: Completed Response (Under Review)
 ```
+
+## GraphState & Gate Transitions (Phase 2)
+The proposal lifecycle is governed by the strongly-typed `GraphState` containing:
+- `requirements`: Extracted text.
+- `reviews`: Department decisions.
+- `approvals`: Trackers for **Gate 1 (Requirements)**, **Gate 2 (Qualification)**, **Gate 3 (Planning)**, and **Gate 4 (Proposal validation)**.
+- `compliance_items`: Auto-assessment mappings.
+- `audit`: Correlation details.

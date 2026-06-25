@@ -14,3 +14,14 @@ The system uses a collaborative multi-agent architecture:
 
 ### 4. The Compliance & Review Agent
 - **Responsibility**: Reviews drafts against original RFP constraints (word counts, formatting, mandatory clauses) and corrects inconsistencies.
+
+## Shared Agent Interface (Phase 2)
+All agents output a structured Pydantic model (`AgentOutput`) containing:
+- **Decision**: Final outcome
+- **Confidence**: Score from 0.0 to 1.0
+- **Reasoning**: Plain text reasoning
+- **Evidence**: List of source citations
+- **Risks**: Potential issues
+- **Recommendations**: Proposed steps
+- **Processing Time**: Duration in ms
+- **Metadata**: Dictionary of model execution details

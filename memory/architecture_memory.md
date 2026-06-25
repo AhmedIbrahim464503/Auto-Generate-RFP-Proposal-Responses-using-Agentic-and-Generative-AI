@@ -12,3 +12,5 @@
 - Schema-first inputs/outputs using Pydantic between all agents.
 - Four mandatory Human-in-the-Loop (HITL) approval gates.
 - Observability via trace logs and OpenTelemetry/LangSmith.
+- **Relational Domain Layout (Phase 2)**: Standardized mapping database files (`backend/app/db/base.py`) compiling 22 entities.
+- **Structured Contracts**: Created Pydantic agent models (`AgentOutput`), state schemas (`GraphState`), and request/response API contracts.
