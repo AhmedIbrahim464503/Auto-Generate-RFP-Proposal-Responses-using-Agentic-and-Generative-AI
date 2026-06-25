@@ -1,0 +1,21 @@
+[tool.black]
+line-length = 88
+target-version = ['py312']
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | alembic
+)/
+'''
+
+[tool.ruff]
+line-length = 88
+target-version = "py312"
+exclude = ["alembic"]
+
+[tool.mypy]
+python_version = "3.12"
+strict = true
+ignore_missing_imports = true
+exclude = ["alembic"]

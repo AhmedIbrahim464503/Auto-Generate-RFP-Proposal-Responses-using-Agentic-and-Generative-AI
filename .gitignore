@@ -1,0 +1,26 @@
+# Python virtual environment
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/
+logs/
+
+# Next.js build and cache
+.next/
+node_modules/
+dist/
+build/
+.npm
+out/
+
+# Environment variables
+.env
+.env.local
+
+# IDE configurations
+.vscode/
+.idea/
+*.swp
+*.swo
