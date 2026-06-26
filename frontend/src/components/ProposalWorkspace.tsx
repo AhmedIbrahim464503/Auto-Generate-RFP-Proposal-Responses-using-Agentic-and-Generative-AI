@@ -3,6 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
+import ProposalReviewDashboard from "./ProposalReviewDashboard";
+
 interface Citation {
   id: string;
   generated_section_id: string;
@@ -15,6 +17,7 @@ interface Citation {
   source_location?: string | null;
   confidence: number;
 }
+
 
 interface EvidenceLink {
   id: string;
@@ -446,6 +449,9 @@ export default function ProposalWorkspace({ documentId }: ProposalWorkspaceProps
             </div>
           </div>
         </div>
+      </div>
+      <div className="pt-6 border-t border-slate-800">
+        <ProposalReviewDashboard proposalId={documentId} />
       </div>
     </div>
   );

@@ -52,4 +52,11 @@ from backend.app.models.ai_platform import (
     AIConfig,
     GovernancePolicy,
 )
+from backend.app.models.proposal_review import (
+    ProposalReviewSession,
+    ProposalReviewFinding,
+    ProposalReviewScore,
+    ProposalReviewWorkflow,
+    ProposalReviewAudit,
+)
 

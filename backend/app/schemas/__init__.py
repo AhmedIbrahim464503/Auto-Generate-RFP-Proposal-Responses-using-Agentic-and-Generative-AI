@@ -102,3 +102,13 @@ from backend.app.schemas.ai_platform import (
     ExplainabilityRecordResponse,
     AIConfigResponse,
 )
+from backend.app.schemas.proposal_review import (
+    ProposalReviewFindingResponse,
+    ProposalReviewScoreResponse,
+    ProposalReviewAuditResponse,
+    ProposalReviewSessionResponse,
+    ProposalReviewWorkflowResponse,
+    StartReviewRequest,
+    RefineReviewRequest,
+    HumanDecisionRequest,
+)

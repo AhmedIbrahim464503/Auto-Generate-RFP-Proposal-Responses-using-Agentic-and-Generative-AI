@@ -80,4 +80,12 @@ from backend.app.models.ai_platform import (  # noqa
     AIConfig,
     GovernancePolicy,
 )
+from backend.app.models.proposal_review import (  # noqa
+    ProposalReviewSession,
+    ProposalReviewFinding,
+    ProposalReviewScore,
+    ProposalReviewWorkflow,
+    ProposalReviewAudit,
+)
+
 

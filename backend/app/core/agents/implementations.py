@@ -228,19 +228,23 @@ class WriterAgent(BaseAgent):
 
     def run(self, db: Session, section_data: Dict[str, Any], config: Dict[str, Any] = None) -> AgentOutput:
         from backend.app.services.proposal_generator import proposal_generator_service
+        from backend.app.models.proposal import ProposalPlan, ProposalSection
         def logic(db_session, sdata, cfg):
             proposal_plan_id = sdata.get("proposal_plan_id")
             section_id = sdata.get("section_id")
             tone_style = sdata.get("tone_style", "Professional")
-            actor = sdata.get("actor", "Proposal Writer")
             context_override = sdata.get("additional_context")
             
-            res = proposal_generator_service.generate_single_section(
+            plan = db_session.query(ProposalPlan).filter(ProposalPlan.id == proposal_plan_id).first()
+            section = db_session.query(ProposalSection).filter(ProposalSection.id == section_id).first()
+            if not plan or not section:
+                raise ValueError("Proposal Plan or Section not found.")
+                
+            res = proposal_generator_service.generate_section_content(
                 db=db_session,
-                proposal_plan_id=proposal_plan_id,
-                section_id=section_id,
+                proposal_plan=plan,
+                section=section,
                 tone_style=tone_style,
-                actor=actor,
                 additional_context=context_override
             )
             return AgentOutput(
