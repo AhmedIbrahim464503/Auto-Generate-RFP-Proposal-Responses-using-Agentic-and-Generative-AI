@@ -298,12 +298,6 @@ def get_compliance(id: str, db: Session = Depends(get_db)):
     return compliance
 
 
-@router.get("/{id}/risks")
-def get_risks(id: str, db: Session = Depends(get_db)):
-    risks = db.query(RFPRisk).filter(RFPRisk.rfp_document_id == id, RFPRisk.is_deleted == False).all()
-    return risks
-
-
 @router.get("/{id}/clarifications")
 def get_clarifications(id: str, db: Session = Depends(get_db)):
     clarifications = db.query(ClarificationQuestion).filter(ClarificationQuestion.rfp_document_id == id, ClarificationQuestion.is_deleted == False).all()

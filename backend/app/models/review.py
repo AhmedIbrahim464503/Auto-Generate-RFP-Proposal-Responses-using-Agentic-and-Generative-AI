@@ -16,6 +16,21 @@ class FinancialReview(Base):
     evidence: Mapped[str] = mapped_column(Text, nullable=True)
     risks: Mapped[str] = mapped_column(Text, nullable=True)
     recommendations: Mapped[str] = mapped_column(Text, nullable=True)
+    
+    # Phase 6 Additions
+    escalation_required: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_overridden: Mapped[bool] = mapped_column(Boolean, default=False)
+    override_decision: Mapped[str] = mapped_column(String(50), nullable=True)
+    override_reason: Mapped[str] = mapped_column(Text, nullable=True)
+    overridden_by: Mapped[str] = mapped_column(String(100), nullable=True)
+    override_timestamp: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    findings: Mapped[str] = mapped_column(Text, nullable=True)
+    assumptions: Mapped[str] = mapped_column(Text, nullable=True)
+    missing_information: Mapped[str] = mapped_column(Text, nullable=True)
+    clarification_questions: Mapped[str] = mapped_column(Text, nullable=True)
+    reviewer_metadata: Mapped[str] = mapped_column(Text, nullable=True)
+    processing_metadata: Mapped[str] = mapped_column(Text, nullable=True)
+
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     is_deleted: Mapped[bool] = mapped_column(Boolean, default=False)
 
@@ -35,6 +50,21 @@ class LegalReview(Base):
     evidence: Mapped[str] = mapped_column(Text, nullable=True)
     risks: Mapped[str] = mapped_column(Text, nullable=True)
     recommendations: Mapped[str] = mapped_column(Text, nullable=True)
+
+    # Phase 6 Additions
+    escalation_required: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_overridden: Mapped[bool] = mapped_column(Boolean, default=False)
+    override_decision: Mapped[str] = mapped_column(String(50), nullable=True)
+    override_reason: Mapped[str] = mapped_column(Text, nullable=True)
+    overridden_by: Mapped[str] = mapped_column(String(100), nullable=True)
+    override_timestamp: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    findings: Mapped[str] = mapped_column(Text, nullable=True)
+    assumptions: Mapped[str] = mapped_column(Text, nullable=True)
+    missing_information: Mapped[str] = mapped_column(Text, nullable=True)
+    clarification_questions: Mapped[str] = mapped_column(Text, nullable=True)
+    reviewer_metadata: Mapped[str] = mapped_column(Text, nullable=True)
+    processing_metadata: Mapped[str] = mapped_column(Text, nullable=True)
+
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     is_deleted: Mapped[bool] = mapped_column(Boolean, default=False)
 
@@ -54,6 +84,21 @@ class OperationsReview(Base):
     evidence: Mapped[str] = mapped_column(Text, nullable=True)
     risks: Mapped[str] = mapped_column(Text, nullable=True)
     recommendations: Mapped[str] = mapped_column(Text, nullable=True)
+
+    # Phase 6 Additions
+    escalation_required: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_overridden: Mapped[bool] = mapped_column(Boolean, default=False)
+    override_decision: Mapped[str] = mapped_column(String(50), nullable=True)
+    override_reason: Mapped[str] = mapped_column(Text, nullable=True)
+    overridden_by: Mapped[str] = mapped_column(String(100), nullable=True)
+    override_timestamp: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    findings: Mapped[str] = mapped_column(Text, nullable=True)
+    assumptions: Mapped[str] = mapped_column(Text, nullable=True)
+    missing_information: Mapped[str] = mapped_column(Text, nullable=True)
+    clarification_questions: Mapped[str] = mapped_column(Text, nullable=True)
+    reviewer_metadata: Mapped[str] = mapped_column(Text, nullable=True)
+    processing_metadata: Mapped[str] = mapped_column(Text, nullable=True)
+
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     is_deleted: Mapped[bool] = mapped_column(Boolean, default=False)
 
@@ -73,6 +118,21 @@ class TechnicalReview(Base):
     evidence: Mapped[str] = mapped_column(Text, nullable=True)
     risks: Mapped[str] = mapped_column(Text, nullable=True)
     recommendations: Mapped[str] = mapped_column(Text, nullable=True)
+
+    # Phase 6 Additions
+    escalation_required: Mapped[bool] = mapped_column(Boolean, default=False)
+    is_overridden: Mapped[bool] = mapped_column(Boolean, default=False)
+    override_decision: Mapped[str] = mapped_column(String(50), nullable=True)
+    override_reason: Mapped[str] = mapped_column(Text, nullable=True)
+    overridden_by: Mapped[str] = mapped_column(String(100), nullable=True)
+    override_timestamp: Mapped[datetime] = mapped_column(DateTime, nullable=True)
+    findings: Mapped[str] = mapped_column(Text, nullable=True)
+    assumptions: Mapped[str] = mapped_column(Text, nullable=True)
+    missing_information: Mapped[str] = mapped_column(Text, nullable=True)
+    clarification_questions: Mapped[str] = mapped_column(Text, nullable=True)
+    reviewer_metadata: Mapped[str] = mapped_column(Text, nullable=True)
+    processing_metadata: Mapped[str] = mapped_column(Text, nullable=True)
+
     created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
     is_deleted: Mapped[bool] = mapped_column(Boolean, default=False)
 
@@ -96,3 +156,27 @@ class QualificationDecision(Base):
 
     # Relationships
     opportunity = relationship("Opportunity", back_populates="qualification_decision")
+
+
+class ReviewComment(Base):
+    __tablename__ = "review_comment"
+
+    id: Mapped[uuid.UUID] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    opportunity_id: Mapped[str] = mapped_column(String(36), ForeignKey("opportunity.id"), nullable=False)
+    department: Mapped[str] = mapped_column(String(50), nullable=False)  # financial, legal, operations, technical
+    reviewer: Mapped[str] = mapped_column(String(100), nullable=False)
+    comment_text: Mapped[str] = mapped_column(Text, nullable=False)
+    timestamp: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+
+
+class ReviewOverrideHistory(Base):
+    __tablename__ = "review_override_history"
+
+    id: Mapped[uuid.UUID] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
+    opportunity_id: Mapped[str] = mapped_column(String(36), ForeignKey("opportunity.id"), nullable=False)
+    department: Mapped[str] = mapped_column(String(50), nullable=False)
+    previous_decision: Mapped[str] = mapped_column(String(50), nullable=False)
+    new_decision: Mapped[str] = mapped_column(String(50), nullable=False)
+    override_reason: Mapped[str] = mapped_column(Text, nullable=False)
+    overridden_by: Mapped[str] = mapped_column(String(100), nullable=False)
+    timestamp: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)

@@ -37,4 +37,12 @@ from backend.app.schemas.requirement_intelligence import (
     KnowledgeGraphEdgeOutput,
     RequirementIntelligenceOutput,
 )
+from backend.app.schemas.review import (
+    DepartmentReviewOutput,
+    AggregatedRiskResponse,
+    ReviewCommentRequest,
+    ReviewOverrideRequest,
+    ReviewApproveRequest,
+    AllReviewsStatusResponse,
+)
 

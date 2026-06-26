@@ -6,6 +6,7 @@ import UploadCenter from "../components/UploadCenter";
 import DocumentLibrary from "../components/DocumentLibrary";
 import StructureExplorer from "../components/StructureExplorer";
 import RequirementExplorer from "../components/RequirementExplorer";
+import DepartmentReview from "../components/DepartmentReview";
 
 export default function LandingPage() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -70,6 +71,14 @@ export default function LandingPage() {
               transition={{ duration: 0.5, delay: 0.1 }}
             >
               <RequirementExplorer documentId={selectedDocId} />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <DepartmentReview documentId={selectedDocId} />
             </motion.div>
           </>
         )}

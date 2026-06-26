@@ -14,6 +14,8 @@ from backend.app.models.review import (  # noqa
     OperationsReview,
     TechnicalReview,
     QualificationDecision,
+    ReviewComment,
+    ReviewOverrideHistory,
 )
 from backend.app.models.proposal import (  # noqa
     ProposalPlan,

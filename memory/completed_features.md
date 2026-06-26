@@ -32,6 +32,11 @@
 - [x] Exposed FastAPI REST API endpoints `/requirements/extract`, `/requirements`, `/deliverables`, `/evaluation`, `/submission`, `/compliance`, `/risks`, `/clarifications`, and `/knowledge-graph`.
 - [x] Developed React dashboard `RequirementExplorer` containing a tabular/tree view, severity risk cards, compliance checklists, and interactive SVG relationship nodes graph.
 - [x] Formulated test validation suites verifying in-memory SQLite and endpoint retrieval.
-
-
-
+- [x] Extended `FinancialReview`, `LegalReview`, `OperationsReview`, and `TechnicalReview` models with escalation, override, findings, and metadata fields (`backend/app/models/review.py`).
+- [x] Added `ReviewComment` and `ReviewOverrideHistory` models.
+- [x] Created Alembic migration script for Phase 6 review and HITL extensions.
+- [x] Implemented Pydantic models for department reviews, override, and comment payloads (`backend/app/schemas/review.py`).
+- [x] Implemented `ReviewEngineService` integrating Gemini 2.5 Flash reviews, custom business rules (NET30 terms, $5M insurance threshold), and mock fallbacks.
+- [x] Exposed FastAPI endpoints under prefix `/rfp` for `/reviews/financial`, `/legal`, `/operations`, `/technical`, `/reviews` (bulk run and status fetching), `/approve`, `/override`, and unified `/risks`.
+- [x] Developed React dashboard `DepartmentReview` with departmental workspaces, override/approve workflows, comment logging, and audit history timeline.
+- [x] Formulated test suites validating reviews and overrides using a session-wide SQLite database connection.

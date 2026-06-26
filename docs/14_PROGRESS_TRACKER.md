@@ -7,6 +7,7 @@
 - [x] Phase 3: Document Parser & Ingestion.
 - [x] Phase 4: AI Document Intelligence Engine & Structural Analysis.
 - [x] Phase 5: AI Requirement Intelligence Engine & RFP Knowledge Graph.
-- [ ] Phase 6: Multi-Agent Orchestration & RAG Engine.
-- [ ] Phase 7: Interactive Response Generation & Split-Pane UI.
-- [ ] Phase 8: E2E Evaluations, Testing, and Compliance Matrix.
+- [x] Phase 6: Enterprise Department Review Engine & HITL Workflows.
+- [ ] Phase 7: Multi-Agent Orchestration & RAG Engine.
+- [ ] Phase 8: Interactive Response Generation & Split-Pane UI.
+- [ ] Phase 9: E2E Evaluations, Testing, and Compliance Matrix.
