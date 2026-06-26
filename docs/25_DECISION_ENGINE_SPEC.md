@@ -27,3 +27,13 @@ The decision parameters are represented by database schemas:
 - **Veto Rules**: Triggers vetoes or strict block overrides based on department review NO_GO (Legal/Financial Veto).
 - **Estimated Win Probability**: Separately calculated using Gemini 2.5 Flash based on Opportunity Score, department outcomes, risks, and evidence.
 
+## Enterprise Proposal Planning Engine (Phase 8)
+- **Heuristic Ownership Assignments**: Automatically assigns ownership of outline sections and compliance matrix items based on domain mappings (e.g., Commercial/Legal to Legal department, Commercial/Financial to Finance department, Technical/Scope to Technical/Operations departments).
+- **Critical Path & Timeline Scheduling**: Chronological sequencing of proposal milestones (kickoff, review, draft delivery, buffers) and tasks. Enforces critical paths when task dependencies create timeline bottlenecks.
+- **Lock-status Validation**: Restricts manual outline adjustments, WBS edits, or regeneration actions at the API controller layer when the `ProposalPlan` status is `LOCKED`.
+
+## Enterprise Proposal Generation Platform (Phase 10)
+- **Specialized Writer Routing**: Map proposal sections to 15 specialized writer personas (e.g. Executive, Technical Solution, Financial, Compliance, etc.) based on section titles.
+- **Tone & Style Adaptation**: Tone & Style Engine translates selected styles (Professional, Technical, Persuasive) into system and formatting constraints for the LLM.
+- **Quality Score Determination**: Quality Validator computes a composite quality score (0.0 to 1.0) based on checks for duplicate paragraphs, word count compliance, styling validation, and prompt instructions alignment.
+- **Zero-Hallucination Guardrails**: Fallback checks flag any missing source information, replacing potential hallucinations with `[CONTENT_GAP: <reasons>]` to block invalid data generation.

@@ -8,6 +8,9 @@ import StructureExplorer from "../components/StructureExplorer";
 import RequirementExplorer from "../components/RequirementExplorer";
 import DepartmentReview from "../components/DepartmentReview";
 import ExecutiveDecisionDashboard from "../components/ExecutiveDecisionDashboard";
+import PlanningWorkspace from "../components/PlanningWorkspace";
+import KnowledgeWorkspace from "../components/KnowledgeWorkspace";
+import ProposalWorkspace from "../components/ProposalWorkspace";
 
 export default function LandingPage() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -55,6 +58,15 @@ export default function LandingPage() {
           <DocumentLibrary refreshTrigger={refreshTrigger} onSelectDocument={setSelectedDocId} />
         </motion.div>
 
+        {/* Global Knowledge Platform & Search Panel */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, delay: 0.15 }}
+        >
+          <KnowledgeWorkspace />
+        </motion.div>
+
         {/* Structure Analysis Explorer Panel */}
         {selectedDocId && (
           <>
@@ -88,6 +100,22 @@ export default function LandingPage() {
               transition={{ duration: 0.5, delay: 0.3 }}
             >
               <ExecutiveDecisionDashboard documentId={selectedDocId} />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.4 }}
+            >
+              <PlanningWorkspace documentId={selectedDocId} />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.5 }}
+            >
+              <ProposalWorkspace documentId={selectedDocId} />
             </motion.div>
           </>
         )}

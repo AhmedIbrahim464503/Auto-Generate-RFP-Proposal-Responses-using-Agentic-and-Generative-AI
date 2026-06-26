@@ -35,5 +35,8 @@ No placeholder implementations.
 ### Rule 9: Fail Loudly
 No silent failures.
 
-### Rule 10: Full Traceability
-Every workflow step must be traceable.
+### Rule 11: Content Gap Isolation
+If retrieved knowledge sources are insufficient, do not make up claims. You must output a `[CONTENT_GAP: <details>]` tag rather than hallucinating details.
+
+### Rule 12: Tone Compliance
+Ensure style/tone guidelines are translated into explicit system parameters for LLM calls to prevent tone drift in generated output.
