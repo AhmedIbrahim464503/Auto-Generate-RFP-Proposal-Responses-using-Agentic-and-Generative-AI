@@ -5,4 +5,13 @@ from backend.app.models.proposal import ProposalPlan, ComplianceMatrix, Complian
 from backend.app.models.audit import AuditEvent, ApprovalGate, ApprovalDecision, AgentExecution
 from backend.app.models.system import KnowledgeAsset, SearchResult, SystemConfiguration
 from backend.app.models.analysis import DocumentSection, RFPMetadata
+from backend.app.models.requirement_intelligence import (
+    ComplianceObligation,
+    RFPRisk,
+    RFPAssumption,
+    ClarificationQuestion,
+    KnowledgeGraphEdge,
+    RequirementAssignment,
+)
+
 

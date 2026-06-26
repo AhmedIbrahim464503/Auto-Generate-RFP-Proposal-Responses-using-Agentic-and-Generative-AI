@@ -36,3 +36,11 @@ from backend.app.models.analysis import (  # noqa
     DocumentSection,
     RFPMetadata,
 )
+from backend.app.models.requirement_intelligence import (  # noqa
+    ComplianceObligation,
+    RFPRisk,
+    RFPAssumption,
+    ClarificationQuestion,
+    KnowledgeGraphEdge,
+    RequirementAssignment,
+)

@@ -1,6 +1,6 @@
 import uuid
 from datetime import datetime
-from sqlalchemy import String, DateTime, Boolean, ForeignKey, Text
+from sqlalchemy import String, DateTime, Boolean, ForeignKey, Text, Integer, Float
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from backend.app.db.base_class import Base
 
@@ -27,6 +27,13 @@ class Requirement(Base):
     title: Mapped[str] = mapped_column(String(255), nullable=False)
     text_content: Mapped[str] = mapped_column(Text, nullable=False)
     category: Mapped[str] = mapped_column(String(100), nullable=True)  # technical, legal, financial, etc.
+    priority: Mapped[str] = mapped_column(String(50), nullable=True)   # High, Medium, Low
+    req_type: Mapped[str] = mapped_column(String(100), nullable=True)  # Functional, Non-Functional
+    mandatory: Mapped[bool] = mapped_column(Boolean, default=True)
+    source_section: Mapped[str] = mapped_column(String(255), nullable=True)
+    source_page: Mapped[int] = mapped_column(Integer, nullable=True)
+    parent_id: Mapped[str] = mapped_column(String(36), nullable=True)
+    confidence: Mapped[float] = mapped_column(Float, default=1.0)
     is_deleted: Mapped[bool] = mapped_column(Boolean, default=False)
 
     # Relationships
@@ -44,6 +51,10 @@ class Deliverable(Base):
     requirement_id: Mapped[str] = mapped_column(String(36), ForeignKey("requirement.id"), nullable=False)
     description: Mapped[str] = mapped_column(Text, nullable=False)
     deadline: Mapped[str] = mapped_column(String(100), nullable=True)
+    due_stage: Mapped[str] = mapped_column(String(100), nullable=True)
+    mandatory: Mapped[bool] = mapped_column(Boolean, default=True)
+    responsible_department: Mapped[str] = mapped_column(String(100), nullable=True)
+    confidence: Mapped[float] = mapped_column(Float, default=1.0)
     is_deleted: Mapped[bool] = mapped_column(Boolean, default=False)
 
     # Relationships
@@ -57,6 +68,14 @@ class EvaluationCriteria(Base):
     requirement_id: Mapped[str] = mapped_column(String(36), ForeignKey("requirement.id"), nullable=False)
     criteria_text: Mapped[str] = mapped_column(Text, nullable=False)
     weight: Mapped[str] = mapped_column(String(50), nullable=True)
+    factor: Mapped[str] = mapped_column(String(255), nullable=True)
+    scoring_methodology: Mapped[str] = mapped_column(Text, nullable=True)
+    ranking_criteria: Mapped[str] = mapped_column(Text, nullable=True)
+    selection_method: Mapped[str] = mapped_column(String(100), nullable=True)
+    tie_break_rules: Mapped[str] = mapped_column(Text, nullable=True)
+    preferred_experience: Mapped[str] = mapped_column(Text, nullable=True)
+    preferred_certifications: Mapped[str] = mapped_column(Text, nullable=True)
+    confidence: Mapped[float] = mapped_column(Float, default=1.0)
     is_deleted: Mapped[bool] = mapped_column(Boolean, default=False)
 
     # Relationships
@@ -70,6 +89,18 @@ class SubmissionInstruction(Base):
     requirement_id: Mapped[str] = mapped_column(String(36), ForeignKey("requirement.id"), nullable=False)
     instruction_text: Mapped[str] = mapped_column(Text, nullable=False)
     format_type: Mapped[str] = mapped_column(String(100), nullable=True)
+    submission_method: Mapped[str] = mapped_column(String(100), nullable=True)  # email, portal, physical
+    portal: Mapped[str] = mapped_column(String(255), nullable=True)
+    email: Mapped[str] = mapped_column(String(255), nullable=True)
+    file_naming_rules: Mapped[str] = mapped_column(String(255), nullable=True)
+    file_formats: Mapped[str] = mapped_column(String(255), nullable=True)
+    max_size: Mapped[str] = mapped_column(String(100), nullable=True)
+    required_signatures: Mapped[str] = mapped_column(Text, nullable=True)
+    required_forms: Mapped[str] = mapped_column(Text, nullable=True)
+    num_copies: Mapped[int] = mapped_column(Integer, nullable=True)
+    submission_sequence: Mapped[str] = mapped_column(Text, nullable=True)
+    late_policy: Mapped[str] = mapped_column(Text, nullable=True)
+    confidence: Mapped[float] = mapped_column(Float, default=1.0)
     is_deleted: Mapped[bool] = mapped_column(Boolean, default=False)
 
     # Relationships

@@ -25,3 +25,16 @@ from backend.app.schemas.analysis import (
     QualityReportResponse,
     AnalysisStatusResponse,
 )
+from backend.app.schemas.requirement_intelligence import (
+    RequirementExtractionOutput,
+    DeliverableExtractionOutput,
+    EvaluationCriteriaOutput,
+    SubmissionInstructionOutput,
+    ComplianceItemOutput,
+    RiskOutput,
+    AssumptionOutput,
+    ClarificationQuestionOutput,
+    KnowledgeGraphEdgeOutput,
+    RequirementIntelligenceOutput,
+)
+

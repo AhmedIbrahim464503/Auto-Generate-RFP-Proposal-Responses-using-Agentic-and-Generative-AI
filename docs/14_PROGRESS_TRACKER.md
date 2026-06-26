@@ -6,6 +6,7 @@
 - [x] Phase 2: Domain Modeling, Schema Contracts & Database Design.
 - [x] Phase 3: Document Parser & Ingestion.
 - [x] Phase 4: AI Document Intelligence Engine & Structural Analysis.
-- [ ] Phase 5: Multi-Agent Orchestration & RAG Engine.
-- [ ] Phase 6: Interactive Response Generation & Split-Pane UI.
-- [ ] Phase 7: E2E Evaluations, Testing, and Compliance Matrix.
+- [x] Phase 5: AI Requirement Intelligence Engine & RFP Knowledge Graph.
+- [ ] Phase 6: Multi-Agent Orchestration & RAG Engine.
+- [ ] Phase 7: Interactive Response Generation & Split-Pane UI.
+- [ ] Phase 8: E2E Evaluations, Testing, and Compliance Matrix.

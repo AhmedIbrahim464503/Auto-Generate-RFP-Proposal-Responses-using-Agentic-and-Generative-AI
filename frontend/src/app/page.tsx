@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import UploadCenter from "../components/UploadCenter";
 import DocumentLibrary from "../components/DocumentLibrary";
 import StructureExplorer from "../components/StructureExplorer";
+import RequirementExplorer from "../components/RequirementExplorer";
 
 export default function LandingPage() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -54,13 +55,23 @@ export default function LandingPage() {
 
         {/* Structure Analysis Explorer Panel */}
         {selectedDocId && (
-          <motion.div
-            initial={{ opacity: 0, y: 15 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-          >
-            <StructureExplorer documentId={selectedDocId} />
-          </motion.div>
+          <>
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <StructureExplorer documentId={selectedDocId} />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <RequirementExplorer documentId={selectedDocId} />
+            </motion.div>
+          </>
         )}
       </main>
 
