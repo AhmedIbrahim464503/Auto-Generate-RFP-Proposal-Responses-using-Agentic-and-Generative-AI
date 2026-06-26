@@ -40,3 +40,11 @@
 - [x] Exposed FastAPI endpoints under prefix `/rfp` for `/reviews/financial`, `/legal`, `/operations`, `/technical`, `/reviews` (bulk run and status fetching), `/approve`, `/override`, and unified `/risks`.
 - [x] Developed React dashboard `DepartmentReview` with departmental workspaces, override/approve workflows, comment logging, and audit history timeline.
 - [x] Formulated test suites validating reviews and overrides using a session-wide SQLite database connection.
+- [x] Defined database tables for `QualificationDecision`, `QualificationScoringBreakdown`, `QualificationDecisionHistory`, `QualificationExecutiveComment`, and `QualificationRule` (`backend/app/models/qualification.py`).
+- [x] Generated Alembic database migration script for Phase 7 qualification tables.
+- [x] Implemented Pydantic models for qualification responses, rules, approvals, overrides, and recalculation payloads (`backend/app/schemas/qualification.py`).
+- [x] Developed `QualificationRulesService` managing versioned rulesets and seeding default config payload with region/BU scopes.
+- [x] Developed `QualificationEngineService` calculating dynamic Opportunity Scores (0-100) and integrating Gemini 2.5 Flash win probability estimate models.
+- [x] Exposed FastAPI endpoints for runs, gets, history, overrides, approvals, and weight recalculations under prefix `/rfp`.
+- [x] Developed React component `ExecutiveDecisionDashboard` with scoring breakdown graphs, slider simulator recalculations, audit timeline views, and approval workflows.
+- [x] Formulated test suites validating scoring calculations, rulesets, approvals, and API routes.

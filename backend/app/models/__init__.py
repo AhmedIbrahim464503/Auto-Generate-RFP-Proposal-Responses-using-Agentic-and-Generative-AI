@@ -5,9 +5,15 @@ from backend.app.models.review import (
     LegalReview,
     OperationsReview,
     TechnicalReview,
-    QualificationDecision,
     ReviewComment,
     ReviewOverrideHistory,
+)
+from backend.app.models.qualification import (
+    QualificationDecision,
+    QualificationScoringBreakdown,
+    QualificationDecisionHistory,
+    QualificationExecutiveComment,
+    QualificationRule,
 )
 from backend.app.models.proposal import ProposalPlan, ComplianceMatrix, ComplianceItem, ProposalSection
 from backend.app.models.audit import AuditEvent, ApprovalGate, ApprovalDecision, AgentExecution

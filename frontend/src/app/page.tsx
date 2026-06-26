@@ -7,6 +7,7 @@ import DocumentLibrary from "../components/DocumentLibrary";
 import StructureExplorer from "../components/StructureExplorer";
 import RequirementExplorer from "../components/RequirementExplorer";
 import DepartmentReview from "../components/DepartmentReview";
+import ExecutiveDecisionDashboard from "../components/ExecutiveDecisionDashboard";
 
 export default function LandingPage() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
@@ -79,6 +80,14 @@ export default function LandingPage() {
               transition={{ duration: 0.5, delay: 0.2 }}
             >
               <DepartmentReview documentId={selectedDocId} />
+            </motion.div>
+
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <ExecutiveDecisionDashboard documentId={selectedDocId} />
             </motion.div>
           </>
         )}

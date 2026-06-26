@@ -140,24 +140,6 @@ class TechnicalReview(Base):
     opportunity = relationship("Opportunity", back_populates="tech_reviews")
 
 
-class QualificationDecision(Base):
-    __tablename__ = "qualification_decision"
-
-    id: Mapped[uuid.UUID] = mapped_column(String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
-    opportunity_id: Mapped[str] = mapped_column(String(36), ForeignKey("opportunity.id"), nullable=False)
-    final_decision: Mapped[str] = mapped_column(String(50), nullable=False)  # GO, NO_GO
-    confidence: Mapped[float] = mapped_column(Float, default=1.0)
-    reasoning: Mapped[str] = mapped_column(Text, nullable=True)
-    evidence: Mapped[str] = mapped_column(Text, nullable=True)
-    risks: Mapped[str] = mapped_column(Text, nullable=True)
-    recommendations: Mapped[str] = mapped_column(Text, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-    is_deleted: Mapped[bool] = mapped_column(Boolean, default=False)
-
-    # Relationships
-    opportunity = relationship("Opportunity", back_populates="qualification_decision")
-
-
 class ReviewComment(Base):
     __tablename__ = "review_comment"
 

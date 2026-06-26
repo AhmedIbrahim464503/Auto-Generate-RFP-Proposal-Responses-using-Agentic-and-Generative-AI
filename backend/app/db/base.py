@@ -13,9 +13,15 @@ from backend.app.models.review import (  # noqa
     LegalReview,
     OperationsReview,
     TechnicalReview,
-    QualificationDecision,
     ReviewComment,
     ReviewOverrideHistory,
+)
+from backend.app.models.qualification import (  # noqa
+    QualificationDecision,
+    QualificationScoringBreakdown,
+    QualificationDecisionHistory,
+    QualificationExecutiveComment,
+    QualificationRule,
 )
 from backend.app.models.proposal import (  # noqa
     ProposalPlan,
