@@ -58,5 +58,47 @@ from backend.app.schemas.qualification import (
     ExecutiveCommentCreateRequest,
     DecisionHistoryResponse,
 )
-
-
+from backend.app.schemas.proposal import (
+    ProposalPlanResponse,
+    ProposalSectionResponse,
+    ComplianceMatrixItemResponse,
+    ProposalTaskResponse,
+    ProposalMilestoneResponse,
+    RequiredDocumentResponse,
+    ClarificationRequestResponse,
+    PlanningHistoryResponse,
+    ProposalApproveRequest,
+    ProposalUpdateRequest,
+)
+from backend.app.schemas.knowledge import (
+    KnowledgeAssetCreate,
+    KnowledgeAssetUpdateRequest,
+    KnowledgeChunkResponse,
+    GovernanceRecordResponse,
+    KnowledgeAssetResponse,
+    SearchLogResponse,
+    KnowledgeSearchRequest,
+    ChunkSearchCitation,
+    SearchResultItem,
+    KnowledgeSearchResponse,
+)
+from backend.app.schemas.proposal_generation import (
+    ProposalCitationResponse,
+    ProposalEvidenceLinkResponse,
+    GeneratedSectionResponse,
+    GenerationHistoryResponse,
+    ProposalGenerateRequest,
+    ProposalSectionGenerateRequest,
+)
+from backend.app.schemas.ai_platform import (
+    ModelRegistryResponse,
+    AgentRegistryResponse,
+    PromptRegistryResponse,
+    ToolRegistryResponse,
+    WorkflowRegistryResponse,
+    CapabilityRegistryResponse,
+    AgentMemoryResponse,
+    AgentMetricResponse,
+    ExplainabilityRecordResponse,
+    AIConfigResponse,
+)

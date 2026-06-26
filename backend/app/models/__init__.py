@@ -15,10 +15,22 @@ from backend.app.models.qualification import (
     QualificationExecutiveComment,
     QualificationRule,
 )
-from backend.app.models.proposal import ProposalPlan, ComplianceMatrix, ComplianceItem, ProposalSection
+from backend.app.models.proposal import (
+    ProposalPlan,
+    ComplianceMatrix,
+    ComplianceItem,
+    ProposalSection,
+    ProposalTask,
+    ProposalMilestone,
+    RequiredDocument,
+    ClarificationRequest,
+    PlanningHistory,
+)
 from backend.app.models.audit import AuditEvent, ApprovalGate, ApprovalDecision, AgentExecution
-from backend.app.models.system import KnowledgeAsset, SearchResult, SystemConfiguration
+from backend.app.models.system import SystemConfiguration
+from backend.app.models.knowledge import KnowledgeAsset, KnowledgeChunk, SearchLog, GovernanceRecord
 from backend.app.models.analysis import DocumentSection, RFPMetadata
+from backend.app.models.proposal_generation import GeneratedSection, GenerationHistory, ProposalCitation, ProposalEvidenceLink
 from backend.app.models.requirement_intelligence import (
     ComplianceObligation,
     RFPRisk,
@@ -27,5 +39,17 @@ from backend.app.models.requirement_intelligence import (
     KnowledgeGraphEdge,
     RequirementAssignment,
 )
-
+from backend.app.models.ai_platform import (
+    ModelRegistry,
+    AgentRegistry,
+    PromptRegistry,
+    ToolRegistry,
+    WorkflowRegistry,
+    CapabilityRegistry,
+    AgentMemory,
+    AgentMetric,
+    ExplainabilityRecord,
+    AIConfig,
+    GovernancePolicy,
+)
 

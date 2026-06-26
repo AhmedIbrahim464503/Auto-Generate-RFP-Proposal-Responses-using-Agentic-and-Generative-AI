@@ -28,6 +28,11 @@ from backend.app.models.proposal import (  # noqa
     ComplianceMatrix,
     ComplianceItem,
     ProposalSection,
+    ProposalTask,
+    ProposalMilestone,
+    RequiredDocument,
+    ClarificationRequest,
+    PlanningHistory,
 )
 from backend.app.models.audit import (  # noqa
     AuditEvent,
@@ -36,13 +41,23 @@ from backend.app.models.audit import (  # noqa
     AgentExecution,
 )
 from backend.app.models.system import (  # noqa
-    KnowledgeAsset,
-    SearchResult,
     SystemConfiguration,
+)
+from backend.app.models.knowledge import (  # noqa
+    KnowledgeAsset,
+    KnowledgeChunk,
+    SearchLog,
+    GovernanceRecord,
 )
 from backend.app.models.analysis import (  # noqa
     DocumentSection,
     RFPMetadata,
+)
+from backend.app.models.proposal_generation import (  # noqa
+    GeneratedSection,
+    GenerationHistory,
+    ProposalCitation,
+    ProposalEvidenceLink,
 )
 from backend.app.models.requirement_intelligence import (  # noqa
     ComplianceObligation,
@@ -52,3 +67,17 @@ from backend.app.models.requirement_intelligence import (  # noqa
     KnowledgeGraphEdge,
     RequirementAssignment,
 )
+from backend.app.models.ai_platform import (  # noqa
+    ModelRegistry,
+    AgentRegistry,
+    PromptRegistry,
+    ToolRegistry,
+    WorkflowRegistry,
+    CapabilityRegistry,
+    AgentMemory,
+    AgentMetric,
+    ExplainabilityRecord,
+    AIConfig,
+    GovernancePolicy,
+)
+
