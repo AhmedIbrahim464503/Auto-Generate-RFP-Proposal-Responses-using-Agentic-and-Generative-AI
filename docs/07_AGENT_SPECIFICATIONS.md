@@ -25,3 +25,8 @@ All agents output a structured Pydantic model (`AgentOutput`) containing:
 - **Recommendations**: Proposed steps
 - **Processing Time**: Duration in ms
 - **Metadata**: Dictionary of model execution details
+
+## Document Intelligence Model (Phase 4)
+- **Model**: `gemini-2.5-flash` natively parsing Pydantic schema schemas.
+- **Output validation**: Restricts responses to structured JSON formats mapping exactly to `SectionStructure` and `ExtractionMetadataOutput` schemas.
+- **Error Guarding**: Employs retry loop mechanisms with exponential backoffs.

@@ -32,3 +32,7 @@ from backend.app.models.system import (  # noqa
     SearchResult,
     SystemConfiguration,
 )
+from backend.app.models.analysis import (  # noqa
+    DocumentSection,
+    RFPMetadata,
+)

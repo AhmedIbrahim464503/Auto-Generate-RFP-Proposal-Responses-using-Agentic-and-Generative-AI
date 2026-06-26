@@ -4,8 +4,8 @@
 - [x] Phase 0 Design and Architectural Foundation.
 - [x] Phase 1: Core Data & Infrastructure setup.
 - [x] Phase 2: Domain Modeling, Schema Contracts & Database Design.
-- [ ] Phase 3: Document Parser & Retrieval Engine (RAG).
-- [ ] Phase 4: Multi-agent Orchestration Framework (LangGraph).
-- [ ] Phase 5: API & Backend development.
-- [ ] Phase 6: Next.js Frontend implementation.
-- [ ] Phase 7: Testing, Evaluation, and Optimization.
+- [x] Phase 3: Document Parser & Ingestion.
+- [x] Phase 4: AI Document Intelligence Engine & Structural Analysis.
+- [ ] Phase 5: Multi-Agent Orchestration & RAG Engine.
+- [ ] Phase 6: Interactive Response Generation & Split-Pane UI.
+- [ ] Phase 7: E2E Evaluations, Testing, and Compliance Matrix.

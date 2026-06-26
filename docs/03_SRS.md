@@ -7,6 +7,7 @@
 4. **Export**: Export final proposal in standard DOCX or PDF format.
 5. **Traceable Domain Model**: System must bind Opportunities, RFP Documents, Requirements, Deliverables, and Department Reviews to a relational schema with 4 Human approval gates.
 6. **Audit Logs**: Trace actor actions, timestamping, entity state deltas, and correlation IDs in the database.
+7. **AI Document Intelligence (Phase 4)**: Extract hierarchical sections (Structure Tree) using semantic segmentation, identify dates/normalized deadlines, extract primary contact objects, and perform document extraction quality evaluations.
 
 ## Non-Functional Requirements
 - **Security**: Data isolation for proprietary corporate data.

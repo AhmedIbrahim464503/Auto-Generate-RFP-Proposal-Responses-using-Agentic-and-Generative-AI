@@ -22,9 +22,10 @@ interface Metadata {
 
 interface DocumentLibraryProps {
   refreshTrigger: number;
+  onSelectDocument: (id: string | null) => void;
 }
 
-export default function DocumentLibrary({ refreshTrigger }: DocumentLibraryProps) {
+export default function DocumentLibrary({ refreshTrigger, onSelectDocument }: DocumentLibraryProps) {
   const [documents, setDocuments] = useState<Document[]>([]);
   const [selectedDocId, setSelectedDocId] = useState<string | null>(null);
   const [metadata, setMetadata] = useState<Metadata | null>(null);
@@ -49,6 +50,7 @@ export default function DocumentLibrary({ refreshTrigger }: DocumentLibraryProps
   const fetchMetadata = async (id: string) => {
     setMetaLoading(true);
     setSelectedDocId(id);
+    onSelectDocument(id);
     try {
       const res = await fetch(`http://localhost:8000/api/v1/documents/${id}/metadata`);
       if (res.ok) {

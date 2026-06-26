@@ -4,9 +4,11 @@ import React, { useState } from "react";
 import { motion } from "framer-motion";
 import UploadCenter from "../components/UploadCenter";
 import DocumentLibrary from "../components/DocumentLibrary";
+import StructureExplorer from "../components/StructureExplorer";
 
 export default function LandingPage() {
   const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [selectedDocId, setSelectedDocId] = useState<string | null>(null);
 
   const handleUploadSuccess = () => {
     setRefreshTrigger((prev) => prev + 1);
@@ -47,8 +49,19 @@ export default function LandingPage() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5, delay: 0.1 }}
         >
-          <DocumentLibrary refreshTrigger={refreshTrigger} />
+          <DocumentLibrary refreshTrigger={refreshTrigger} onSelectDocument={setSelectedDocId} />
         </motion.div>
+
+        {/* Structure Analysis Explorer Panel */}
+        {selectedDocId && (
+          <motion.div
+            initial={{ opacity: 0, y: 15 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            <StructureExplorer documentId={selectedDocId} />
+          </motion.div>
+        )}
       </main>
 
       <footer className="mt-auto pt-8 text-center text-[10px] text-neutral-600 font-mono">

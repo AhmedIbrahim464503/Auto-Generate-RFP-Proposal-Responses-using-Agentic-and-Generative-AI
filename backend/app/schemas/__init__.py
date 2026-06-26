@@ -18,3 +18,10 @@ from backend.app.schemas.api_contracts import (
     AuditLogResponse,
     DashboardSummaryResponse,
 )
+from backend.app.schemas.analysis import (
+    AnalysisMetadataResponse,
+    SectionResponse,
+    StructureTreeResponse,
+    QualityReportResponse,
+    AnalysisStatusResponse,
+)
