@@ -101,3 +101,9 @@
 - [x] Exposed FastAPI endpoints for workflow management under `/api/v1/workflow/...`.
 - [x] Built React visualizer component `WorkflowMonitor` and mounted it in `ProposalWorkspace`.
 - [x] Formulated backend pytest suite in `tests/backend/test_workflow.py` (all tests passing).
+- [x] Added `reactflow` and `recharts` package dependencies to frontend `package.json`.
+- [x] Created Zustand stores for UI, Workflow, Proposal, Review, and AI states in `frontend/src/store/workflowStore.ts`.
+- [x] Implemented animated 3D visual particle/network canvas in `frontend/src/components/NeuralNetwork3D.tsx`.
+- [x] Developed SVG-based interactive flow visualizer `WorkflowGraph` in `frontend/src/components/WorkflowGraph.tsx`.
+- [x] Refactored landing page layout to support sidebar multi-workspace tab console and observability stats widgets in `frontend/src/app/page.tsx`.
+- [x] Formulated Vitest unit tests in `frontend/src/components/workspaces.test.tsx` verifying Zustand store transitions.
