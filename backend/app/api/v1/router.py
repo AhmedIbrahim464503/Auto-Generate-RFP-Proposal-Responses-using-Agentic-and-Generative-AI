@@ -13,10 +13,14 @@ from backend.app.api.v1.endpoints import (
     ai_platform_v2,
     proposal_review_v1,
     workflow_v1,
+    auth_v1,
+    export_v1,
 )
 
 api_router = APIRouter()
 api_router.include_router(health.router, tags=["system"])
+api_router.include_router(auth_v1.router, prefix="/auth", tags=["auth"])
+api_router.include_router(export_v1.router, prefix="/export", tags=["export"])
 api_router.include_router(documents.router, prefix="/documents", tags=["documents"])
 api_router.include_router(analysis.router, prefix="/documents", tags=["analysis"])
 api_router.include_router(requirements.router, prefix="/rfp", tags=["requirements"])

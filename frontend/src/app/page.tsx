@@ -28,6 +28,7 @@ import ProposalWorkspace from '../components/ProposalWorkspace';
 import NeuralNetwork3D from '../components/NeuralNetwork3D';
 import WorkflowGraph from '../components/WorkflowGraph';
 import WorkflowMonitor from '../components/WorkflowMonitor';
+import OperationsDashboard from '../components/OperationsDashboard';
 
 export default function LandingPage() {
   const [activeTab, setActiveTab] = useState<string>('command_center');
@@ -310,27 +311,30 @@ export default function LandingPage() {
 
                 {/* 8. Settings */}
                 {activeTab === 'settings' && (
-                  <div className="bg-slate-900 border border-slate-850 rounded-xl p-6 space-y-6">
-                    <div>
-                      <h3 className="text-base font-bold text-white">System Settings</h3>
-                      <p className="text-slate-400 text-xs mt-1">
-                        Manage global parameters, API thresholds, local files directory scopes, and theme defaults.
-                      </p>
+                  <div className="space-y-8">
+                    <div className="bg-slate-900 border border-slate-850 rounded-xl p-6 space-y-6">
+                      <div>
+                        <h3 className="text-base font-bold text-white">System Settings</h3>
+                        <p className="text-slate-400 text-xs mt-1">
+                          Manage global parameters, API thresholds, local files directory scopes, and theme defaults.
+                        </p>
+                      </div>
+                      <div className="space-y-4 max-w-md">
+                        <div className="flex justify-between items-center border-b border-slate-850 pb-2.5">
+                          <span className="text-xs text-slate-300 font-semibold">Interactive 3D Visualizer Particles</span>
+                          <input type="checkbox" defaultChecked className="rounded border-slate-700 bg-slate-950 text-violet-500 focus:ring-violet-500 h-4 w-4" />
+                        </div>
+                        <div className="flex justify-between items-center border-b border-slate-850 pb-2.5">
+                          <span className="text-xs text-slate-300 font-semibold">Enable Live Notifications WebSocket</span>
+                          <input type="checkbox" defaultChecked className="rounded border-slate-700 bg-slate-950 text-violet-500 focus:ring-violet-500 h-4 w-4" />
+                        </div>
+                        <div className="flex justify-between items-center border-b border-slate-850 pb-2.5">
+                          <span className="text-xs text-slate-300 font-semibold">Default RAG Search Score Threshold</span>
+                          <input type="number" defaultValue="0.75" step="0.05" className="bg-slate-950 border border-slate-800 text-xs text-slate-300 p-1.5 rounded focus:outline-none w-20 text-center font-mono" />
+                        </div>
+                      </div>
                     </div>
-                    <div className="space-y-4 max-w-md">
-                      <div className="flex justify-between items-center border-b border-slate-850 pb-2.5">
-                        <span className="text-xs text-slate-300 font-semibold">Interactive 3D Visualizer Particles</span>
-                        <input type="checkbox" defaultChecked className="rounded border-slate-700 bg-slate-950 text-violet-500 focus:ring-violet-500 h-4 w-4" />
-                      </div>
-                      <div className="flex justify-between items-center border-b border-slate-850 pb-2.5">
-                        <span className="text-xs text-slate-300 font-semibold">Enable Live Notifications WebSocket</span>
-                        <input type="checkbox" defaultChecked className="rounded border-slate-700 bg-slate-950 text-violet-500 focus:ring-violet-500 h-4 w-4" />
-                      </div>
-                      <div className="flex justify-between items-center border-b border-slate-850 pb-2.5">
-                        <span className="text-xs text-slate-300 font-semibold">Default RAG Search Score Threshold</span>
-                        <input type="number" defaultValue="0.75" step="0.05" className="bg-slate-950 border border-slate-800 text-xs text-slate-300 p-1.5 rounded focus:outline-none w-20 text-center font-mono" />
-                      </div>
-                    </div>
+                    <OperationsDashboard />
                   </div>
                 )}
               </motion.div>

@@ -23,6 +23,13 @@ def create_app() -> FastAPI:
     # Include routers
     app.include_router(api_router, prefix=settings.API_V1_STR)
 
+    # SlowAPI Rate Limiter registration
+    from backend.app.core.security.rate_limit import limiter
+    from slowapi.errors import RateLimitExceeded
+    from slowapi import _rate_limit_exceeded_handler
+    app.state.limiter = limiter
+    app.add_exception_handler(RateLimitExceeded, _rate_limit_exceeded_handler)
+
     # Exception Handlers
     setup_exception_handlers(app)
 

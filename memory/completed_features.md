@@ -107,3 +107,12 @@
 - [x] Developed SVG-based interactive flow visualizer `WorkflowGraph` in `frontend/src/components/WorkflowGraph.tsx`.
 - [x] Refactored landing page layout to support sidebar multi-workspace tab console and observability stats widgets in `frontend/src/app/page.tsx`.
 - [x] Formulated Vitest unit tests in `frontend/src/components/workspaces.test.tsx` verifying Zustand store transitions.
+- [x] Installed `celery`, `redis`, `pyjwt`, `passlib[bcrypt]`, and `slowapi` dependencies.
+- [x] Implemented JWT access and refresh token authentication helpers and OAuth2 role claims checks in `backend/app/core/security/auth.py`.
+- [x] Implemented authentication FastAPI endpoints under `/api/v1/auth/...`.
+- [x] Registered SlowAPI rate limiting middleware context inside FastAPI application bootstrap.
+- [x] Configured Celery broker pipelines and background task definitions for doc intake parsing, indexing, and generator agents.
+- [x] Developed proposal document exporters generating Word DOCX packages and markdown formatting files.
+- [x] Exposed export endpoints returning binary attachment downloads and markdown streams under `/api/v1/export/...`.
+- [x] Built the operations admin center React console component `OperationsDashboard` displaying security policies, celery task statuses, and db audits logs.
+- [x] Formulated operations backend pytest suite in `tests/backend/test_operations.py` (all tests passing).
