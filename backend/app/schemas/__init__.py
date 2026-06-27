@@ -112,3 +112,14 @@ from backend.app.schemas.proposal_review import (
     RefineReviewRequest,
     HumanDecisionRequest,
 )
+from backend.app.schemas.workflow import (
+    WorkflowExecutionResponse,
+    WorkflowCheckpointResponse,
+    WorkflowEventResponse,
+    WorkflowMetricResponse,
+    WorkflowApprovalGateResponse,
+    StartWorkflowRequest,
+    ResumeWorkflowRequest,
+    RollbackWorkflowRequest,
+    WorkflowGraphState,
+)

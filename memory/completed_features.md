@@ -92,6 +92,12 @@
 - [x] Exposed FastAPI endpoints for review execution, refinements, and human-in-the-loop decisions under `/review`.
 - [x] Developed React component `ProposalReviewDashboard` with dials, matrix checks, and override controls, mounted in `ProposalWorkspace`.
 - [x] Formulated backend pytest suites in `tests/backend/test_proposal_review.py` verifying reviews, findings, refinements, overrides, and endpoints (all tests passing).
-
-
-
+- [x] Installed `langgraph` package dependency.
+- [x] Defined workflow database models for executions, checkpoints, events, metrics, and approval gates in `backend/app/models/workflow.py`.
+- [x] Generated Alembic database migration script `12l3m4n5o6p7_phase13_db_workflows.py`.
+- [x] Implemented Pydantic schema contracts and strongly-typed `WorkflowGraphState` in `backend/app/schemas/workflow.py`.
+- [x] Developed workflow node framework and concrete nodes in `backend/app/core/workflow/workflow_nodes.py`.
+- [x] Developed `WorkflowOrchestratorService` compiling the StateGraph pipeline, supporting resume, checkpoints, rollback, retry, and event streaming.
+- [x] Exposed FastAPI endpoints for workflow management under `/api/v1/workflow/...`.
+- [x] Built React visualizer component `WorkflowMonitor` and mounted it in `ProposalWorkspace`.
+- [x] Formulated backend pytest suite in `tests/backend/test_workflow.py` (all tests passing).

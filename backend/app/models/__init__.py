@@ -59,4 +59,11 @@ from backend.app.models.proposal_review import (
     ProposalReviewWorkflow,
     ProposalReviewAudit,
 )
+from backend.app.models.workflow import (
+    WorkflowExecution,
+    WorkflowCheckpoint,
+    WorkflowEvent,
+    WorkflowMetric,
+    WorkflowApprovalGate,
+)
 

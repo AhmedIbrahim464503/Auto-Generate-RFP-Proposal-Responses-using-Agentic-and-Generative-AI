@@ -87,5 +87,10 @@ from backend.app.models.proposal_review import (  # noqa
     ProposalReviewWorkflow,
     ProposalReviewAudit,
 )
-
-
+from backend.app.models.workflow import (  # noqa
+    WorkflowExecution,
+    WorkflowCheckpoint,
+    WorkflowEvent,
+    WorkflowMetric,
+    WorkflowApprovalGate,
+)

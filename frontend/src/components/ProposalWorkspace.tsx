@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 
 import ProposalReviewDashboard from "./ProposalReviewDashboard";
+import WorkflowMonitor from "./WorkflowMonitor";
 
 interface Citation {
   id: string;
@@ -450,7 +451,8 @@ export default function ProposalWorkspace({ documentId }: ProposalWorkspaceProps
           </div>
         </div>
       </div>
-      <div className="pt-6 border-t border-slate-800">
+      <div className="pt-6 border-t border-slate-800 space-y-6">
+        <WorkflowMonitor proposalId={documentId} />
         <ProposalReviewDashboard proposalId={documentId} />
       </div>
     </div>
