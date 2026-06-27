@@ -123,7 +123,7 @@ export default function RequirementExplorer({ documentId }: RequirementExplorerP
   const [clarifications, setClarifications] = useState<ClarificationQuestion[]>([]);
   const [graphData, setGraphData] = useState<GraphData>({ nodes: [], edges: [] });
 
-  const [searchQuery, setSearchQuery] = useState<string>("").toLowerCase();
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [filterCategory, setFilterCategory] = useState<string>("All");
   const [filterPriority, setFilterPriority] = useState<string>("All");
   const [isLoading, setIsLoading] = useState<boolean>(false);

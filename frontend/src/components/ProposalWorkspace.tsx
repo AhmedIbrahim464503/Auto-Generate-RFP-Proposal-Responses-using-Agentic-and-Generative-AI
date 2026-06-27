@@ -132,6 +132,18 @@ export default function ProposalWorkspace({ documentId }: ProposalWorkspaceProps
     }
   };
 
+  const handleExportDocx = () => {
+    if (sections.length === 0) return;
+    const planId = sections[0].proposal_plan_id;
+    window.open(`http://localhost:8000/api/v1/export/${planId}/docx`, "_blank");
+  };
+
+  const handleExportMarkdown = () => {
+    if (sections.length === 0) return;
+    const planId = sections[0].proposal_plan_id;
+    window.open(`http://localhost:8000/api/v1/export/${planId}/markdown`, "_blank");
+  };
+
   const handleGenerateAll = async () => {
     if (sections.length === 0) return;
     const planId = sections[0].proposal_plan_id;
@@ -226,7 +238,7 @@ export default function ProposalWorkspace({ documentId }: ProposalWorkspaceProps
             Independently compile and validate specific proposal sections grounded in governed knowledge repositories
           </p>
         </div>
-        <div className="mt-3 md:mt-0 flex gap-3">
+        <div className="mt-3 md:mt-0 flex gap-2 flex-wrap">
           <select
             value={toneStyle}
             onChange={(e) => setToneStyle(e.target.value)}
@@ -242,9 +254,21 @@ export default function ProposalWorkspace({ documentId }: ProposalWorkspaceProps
           <button
             onClick={handleGenerateAll}
             disabled={isActionLoading}
-            className="px-5 py-2 bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold rounded-lg transition disabled:opacity-50"
+            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-500 text-white text-xs font-bold rounded-lg transition disabled:opacity-50"
           >
-            {isActionLoading ? "Synthesizing Proposals..." : "Generate Full Proposal"}
+            {isActionLoading ? "Synthesizing..." : "Generate Proposal"}
+          </button>
+          <button
+            onClick={handleExportDocx}
+            className="px-4 py-2 bg-teal-600 hover:bg-teal-500 text-white text-xs font-bold rounded-lg transition"
+          >
+            Export Word (.docx)
+          </button>
+          <button
+            onClick={handleExportMarkdown}
+            className="px-4 py-2 bg-slate-800 hover:bg-slate-700 text-slate-200 text-xs font-bold rounded-lg transition"
+          >
+            Export Markdown
           </button>
         </div>
       </div>

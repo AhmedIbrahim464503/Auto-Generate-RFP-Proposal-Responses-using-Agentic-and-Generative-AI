@@ -186,7 +186,7 @@ export default function LandingPage() {
                       <div className="space-y-2 max-h-40 overflow-y-auto pr-2">
                         {notifications.map((n, i) => (
                           <div key={i} className="text-xs font-mono text-slate-400 py-1 border-b border-slate-900 last:border-0">
-                            <span className="text-violet-400 mr-2">[{new Date().toLocaleTimeString()}]</span> {n}
+                            <span className="text-violet-400 mr-2" suppressHydrationWarning>[{new Date().toLocaleTimeString()}]</span> {n}
                           </div>
                         ))}
                       </div>

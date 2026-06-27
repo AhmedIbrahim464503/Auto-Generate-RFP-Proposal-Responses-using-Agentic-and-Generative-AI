@@ -44,8 +44,7 @@ def seed_database():
     doc = RFPDocument(
         opportunity_id=opp.id,
         file_name="dod_cloud_migration_solicitation.pdf",
-        file_path="/storage/dod_cloud_migration_solicitation.pdf",
-        status="PROCESSED"
+        file_path="/storage/dod_cloud_migration_solicitation.pdf"
     )
     db.add(doc)
     db.commit()
