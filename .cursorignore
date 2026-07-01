@@ -1,0 +1,40 @@
+# Virtual Environments & Dependencies
+.venv/
+node_modules/
+frontend/node_modules/
+
+# Build and Compilation Artifacts
+.next/
+frontend/.next/
+dist/
+build/
+out/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Local Databases & Active Storage
+*.db
+*.sqlite
+sps_proposal_capture.db
+sps_proposal_capture_v2.db
+storage/
+memory/
+
+# Testing Caches & Coverage
+.pytest_cache/
+htmlcov/
+.tox/
+.coverage
+coverage.xml
+
+# System & IDE Caches
+.git/
+.github/
+.idea/
+.vscode/
+*.swp
+*.swo
+logs/
+*.log
