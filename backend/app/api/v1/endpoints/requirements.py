@@ -23,13 +23,26 @@ def extract_requirements(id: str, db: Session = Depends(get_db)):
     if not doc:
         raise HTTPException(status_code=404, detail="RFP Document not found")
 
+    from backend.app.services.document_processor import DocumentProcessorFactory
+
     # Perform Gemini/Mock Extraction
-    extracted_data = requirement_engine_service.extract_requirement_intelligence(doc.file_name)
+    try:
+        processor = DocumentProcessorFactory.get_processor(doc.file_path)
+        doc_text = processor.extract_text(doc.file_path)
+    except Exception as e:
+        raise HTTPException(
+            status_code=status.HTTP_422_UNPROCESSABLE_ENTITY,
+            detail=f"Could not extract text from document: {str(e)}"
+        )
+
+    extracted_data = requirement_engine_service.extract_requirement_intelligence(doc_text)
 
     # 1. Clean up old intelligence entities
-    db.query(RequirementAssignment).filter(RequirementAssignment.requirement_id.in_(
-        db.query(Requirement.id).filter(Requirement.rfp_document_id == id)
-    )).delete(synchronize_session=False)
+    req_subquery = db.query(Requirement.id).filter(Requirement.rfp_document_id == id)
+    db.query(Deliverable).filter(Deliverable.requirement_id.in_(req_subquery)).delete(synchronize_session=False)
+    db.query(EvaluationCriteria).filter(EvaluationCriteria.requirement_id.in_(req_subquery)).delete(synchronize_session=False)
+    db.query(SubmissionInstruction).filter(SubmissionInstruction.requirement_id.in_(req_subquery)).delete(synchronize_session=False)
+    db.query(RequirementAssignment).filter(RequirementAssignment.requirement_id.in_(req_subquery)).delete(synchronize_session=False)
     db.query(Requirement).filter(Requirement.rfp_document_id == id).delete(synchronize_session=False)
     db.query(ComplianceObligation).filter(ComplianceObligation.rfp_document_id == id).delete(synchronize_session=False)
     db.query(RFPRisk).filter(RFPRisk.rfp_document_id == id).delete(synchronize_session=False)

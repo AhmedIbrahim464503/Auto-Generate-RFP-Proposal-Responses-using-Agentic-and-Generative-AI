@@ -34,6 +34,13 @@ def get_opportunity_id(doc_id: str, db: Session) -> str:
         raise HTTPException(status_code=404, detail="RFP Document not found")
     return doc.opportunity_id
 
+def _ensure_str(val) -> str:
+    if val is None:
+        return ""
+    if isinstance(val, (dict, list)):
+        return json.dumps(val)
+    return str(val)
+
 @router.post("/{id}/reviews/financial", response_model=DepartmentReviewOutput)
 def run_financial_review(id: str, payment_terms: str = "NET30", insurance_limit: float = 1000000.0, db: Session = Depends(get_db)):
     opp_id = get_opportunity_id(id, db)
@@ -50,8 +57,8 @@ def run_financial_review(id: str, payment_terms: str = "NET30", insurance_limit:
         reviewer="AI Financial Analyst",
         decision=review_output.decision,
         confidence=review_output.confidence,
-        reasoning=review_output.reasoning,
-        evidence=review_output.evidence,
+        reasoning=_ensure_str(review_output.reasoning),
+        evidence=_ensure_str(review_output.evidence),
         risks=json.dumps(review_output.risks),
         recommendations=json.dumps(review_output.recommendations),
         escalation_required=review_output.escalation_required,
@@ -78,8 +85,8 @@ def run_legal_review(id: str, db: Session = Depends(get_db)):
         reviewer="AI Legal Counsel",
         decision=review_output.decision,
         confidence=review_output.confidence,
-        reasoning=review_output.reasoning,
-        evidence=review_output.evidence,
+        reasoning=_ensure_str(review_output.reasoning),
+        evidence=_ensure_str(review_output.evidence),
         risks=json.dumps(review_output.risks),
         recommendations=json.dumps(review_output.recommendations),
         escalation_required=review_output.escalation_required,
@@ -106,8 +113,8 @@ def run_operations_review(id: str, db: Session = Depends(get_db)):
         reviewer="AI Operations Specialist",
         decision=review_output.decision,
         confidence=review_output.confidence,
-        reasoning=review_output.reasoning,
-        evidence=review_output.evidence,
+        reasoning=_ensure_str(review_output.reasoning),
+        evidence=_ensure_str(review_output.evidence),
         risks=json.dumps(review_output.risks),
         recommendations=json.dumps(review_output.recommendations),
         escalation_required=review_output.escalation_required,
@@ -134,8 +141,8 @@ def run_technical_review(id: str, db: Session = Depends(get_db)):
         reviewer="AI Technical Lead",
         decision=review_output.decision,
         confidence=review_output.confidence,
-        reasoning=review_output.reasoning,
-        evidence=review_output.evidence,
+        reasoning=_ensure_str(review_output.reasoning),
+        evidence=_ensure_str(review_output.evidence),
         risks=json.dumps(review_output.risks),
         recommendations=json.dumps(review_output.recommendations),
         escalation_required=review_output.escalation_required,
