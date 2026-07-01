@@ -5,7 +5,7 @@ from typing import Dict, Any, List, Optional
 from sqlalchemy.orm import Session
 from pydantic import BaseModel, Field
 
-import google.generativeai as genai
+from groq import Groq
 from backend.app.core.config import settings
 from backend.app.core.logger import logger
 
@@ -70,40 +70,103 @@ PROMPT_REGISTRY = {
 
 class AIEngineService:
     def __init__(self):
-        self.api_key = settings.GEMINI_API_KEY
-        self.model_name = "gemini-2.5-flash"
+        self.api_key = settings.GROQ_API_KEY
+        self.model_name = "llama-3.3-70b-versatile"  # Groq's high-performance model
         self.prompt_version = "v1.0"
         
         if self.api_key and self.api_key != "your-api-key-here":
-            genai.configure(api_key=self.api_key)
-            self.model = genai.GenerativeModel(self.model_name)
-            logger.info(f"AIEngineService initialized with Gemini Model: {self.model_name}")
+            self.client = Groq(api_key=self.api_key)
+            logger.info(f"AIEngineService initialized with Groq Model: {self.model_name}")
         else:
-            self.model = None
-            logger.warn("AIEngineService: GEMINI_API_KEY not found. Fallback mockup engine active.")
+            self.client = None
+            logger.warn("AIEngineService: GROQ_API_KEY not found. Fallback mockup engine active.")
 
-    def run_inference_with_retry(self, prompt: str, schema: Any, retries: int = 3, model_override: Any = None) -> Any:
-        active_model = model_override or self.model
-        if not active_model:
+    def _clean_json(self, text: str) -> str:
+        if not text:
+            return ""
+        text = text.strip()
+        if text.startswith("```json"):
+            text = text[7:]
+        elif text.startswith("```"):
+            text = text[3:]
+        if text.endswith("```"):
+            text = text[:-3]
+        text = text.strip()
+        first_brace = text.find('{')
+        first_bracket = text.find('[')
+        if first_brace != -1 and (first_bracket == -1 or first_brace < first_bracket):
+            last_brace = text.rfind('}')
+            if last_brace != -1:
+                text = text[first_brace:last_brace+1]
+        elif first_bracket != -1:
+            last_bracket = text.rfind(']')
+            if last_bracket != -1:
+                text = text[first_bracket:last_bracket+1]
+        return text
+
+    def run_inference_with_retry(self, prompt: str, schema: Any = None, retries: int = 3) -> Optional[str]:
+        if not self.client:
+            logger.warn("No Groq client available. Returning mock response.")
+            return json.dumps({"mock": True})
+
+        models_to_try = [self.model_name, "llama-3.1-8b-instant", "qwen/qwen3-32b"]
+        for model in models_to_try:
+            for attempt in range(retries):
+                try:
+                    kwargs = {
+                        "messages": [
+                            {"role": "system", "content": PROMPT_REGISTRY[self.prompt_version]["system_instruction"] + "\nReturn ONLY valid JSON format."},
+                            {"role": "user", "content": prompt}
+                        ],
+                        "model": model,
+                        "temperature": 0.3,
+                        "max_tokens": 4096
+                    }
+                    if schema and not (hasattr(schema, "__origin__") and str(schema.__origin__).endswith("list")):
+                        kwargs["response_format"] = {"type": "json_object"}
+                    response = self.client.chat.completions.create(**kwargs)
+                    return self._clean_json(response.choices[0].message.content)
+                except Exception as e:
+                    err_str = str(e)
+                    logger.warn(f"Groq API attempt {attempt+1} with model {model} failed: {err_str}")
+                    if "429" in err_str or "rate_limit" in err_str.lower() or "413" in err_str:
+                        logger.warn(f"Rate limit hit on {model}, falling back to next available Groq model.")
+                        break
+                    if attempt == retries - 1 and model == models_to_try[-1]:
+                        logger.error(f"All Groq API retries exhausted. Returning mock.")
+                        return json.dumps({"mock": True})
+                    time.sleep(1)
+        return json.dumps({"mock": True})
+
+    def generate_text(self, prompt: str, system_prompt: Optional[str] = None, max_tokens: int = 3000, temperature: float = 0.3, retries: int = 3) -> Optional[str]:
+        if not self.client:
             return None
 
-        # Exp backoff
-        for attempt in range(retries):
-            try:
-                # Configuring structured outputs using Gemini API Schema
-                response = active_model.generate_content(
-                    prompt,
-                    generation_config=genai.GenerationConfig(
-                        response_mime_type="application/json",
-                        response_schema=schema
+        sys_content = system_prompt or "You are an expert AI Assistant and enterprise proposal specialist. Output clean, publication-grade Markdown."
+        models_to_try = [self.model_name, "llama-3.1-8b-instant", "qwen/qwen3-32b"]
+        for model in models_to_try:
+            for attempt in range(retries):
+                try:
+                    res = self.client.chat.completions.create(
+                        model=model,
+                        messages=[
+                            {"role": "system", "content": sys_content},
+                            {"role": "user", "content": prompt}
+                        ],
+                        temperature=temperature,
+                        max_tokens=max_tokens
                     )
-                )
-                return response
-            except Exception as e:
-                logger.warn(f"Gemini API attempt {attempt+1} failed: {str(e)}")
-                if attempt == retries - 1:
-                    raise e
-                time.sleep(2 ** attempt)
+                    content = res.choices[0].message.content
+                    if content:
+                        return content.strip()
+                except Exception as e:
+                    err_str = str(e)
+                    logger.warning(f"Groq text generation attempt {attempt+1} on model {model} failed: {err_str}")
+                    if "429" in err_str or "rate_limit" in err_str.lower() or "413" in err_str:
+                        logger.warning(f"Rate limit on {model}, falling back to next available model.")
+                        break
+                    time.sleep(1)
+        return None
 
     def analyze_document_structure(self, doc_text: str, db: Session = None) -> List[SectionStructure]:
         from backend.app.db.session import SessionLocal
@@ -118,50 +181,24 @@ class AIEngineService:
             ai_platform_service.seed_ai_platform_defaults(db)
             prompt_reg = ai_platform_service.get_prompt(db, "segmentation_prompt", self.prompt_version)
             user_template = prompt_reg.user_template if prompt_reg else PROMPT_REGISTRY[self.prompt_version]["segmentation_prompt"]
-            prompt = user_template.format(text=doc_text[:50000])
-
-            active_model_reg = ai_platform_service.get_active_model(db, "gemini")
-            model_name = active_model_reg.model_name if active_model_reg else self.model_name
-
-            model_obj = None
-            if self.api_key and self.api_key != "your-api-key-here":
-                model_obj = genai.GenerativeModel(model_name)
+            prompt = user_template.format(text=doc_text[:16000])
 
             t0 = time.time()
-            response = self.run_inference_with_retry(prompt, List[SectionStructure], model_override=model_obj)
+            response_text = self.run_inference_with_retry(prompt, List[SectionStructure])
             latency_ms = (time.time() - t0) * 1000
 
-            if not response:
-                return self._mock_document_structure()
-
-            data = json.loads(response.text)
-            logger.info(f"Document structure successfully analyzed via Gemini. Latency: {latency_ms:.2f}ms")
-
-            ai_platform_service.log_agent_execution(
-                db=db,
-                agent_id="parser",
-                execution_id=None,
-                latency_ms=latency_ms,
-                input_tokens=len(prompt) // 4,
-                output_tokens=len(response.text) // 4,
-                cost=0.0,
-                status="success"
-            )
-            ai_platform_service.log_explainability(
-                db=db,
-                execution_id=None,
-                inputs={"text_len": len(doc_text)},
-                retrieved_evidence={},
-                rules_used={},
-                prompt_version=self.prompt_version,
-                model_version=model_name,
-                confidence=0.9,
-                reasoning="Segmented document headings and content",
-                output_schema=None
-            )
-            return [SectionStructure(**item) for item in data]
+            if response_text and "mock" not in response_text:
+                try:
+                    data = json.loads(response_text)
+                    logger.info(f"Document structure successfully analyzed via Groq. Latency: {latency_ms:.2f}ms")
+                    return [SectionStructure(**item) for item in data] if isinstance(data, list) else self._mock_document_structure()
+                except (json.JSONDecodeError, TypeError):
+                    logger.warning("Could not parse Groq JSON response. Using mock.")
+                    return self._mock_document_structure()
+            
+            return self._mock_document_structure()
         except Exception as e:
-            logger.error(f"Failed to parse model structure output: {str(e)}")
+            logger.error(f"Failed to analyze document structure: {str(e)}")
             return self._mock_document_structure()
         finally:
             if own_db:
@@ -180,50 +217,24 @@ class AIEngineService:
             ai_platform_service.seed_ai_platform_defaults(db)
             prompt_reg = ai_platform_service.get_prompt(db, "metadata_prompt", self.prompt_version)
             user_template = prompt_reg.user_template if prompt_reg else PROMPT_REGISTRY[self.prompt_version]["metadata_prompt"]
-            prompt = user_template.format(text=doc_text[:50000])
-
-            active_model_reg = ai_platform_service.get_active_model(db, "gemini")
-            model_name = active_model_reg.model_name if active_model_reg else self.model_name
-
-            model_obj = None
-            if self.api_key and self.api_key != "your-api-key-here":
-                model_obj = genai.GenerativeModel(model_name)
+            prompt = user_template.format(text=doc_text[:16000])
 
             t0 = time.time()
-            response = self.run_inference_with_retry(prompt, ExtractionMetadataOutput, model_override=model_obj)
+            response_text = self.run_inference_with_retry(prompt, ExtractionMetadataOutput)
             latency_ms = (time.time() - t0) * 1000
 
-            if not response:
-                return self._mock_document_metadata()
-
-            data = json.loads(response.text)
-            logger.info(f"Document metadata successfully analyzed via Gemini. Latency: {latency_ms:.2f}ms")
-
-            ai_platform_service.log_agent_execution(
-                db=db,
-                agent_id="parser",
-                execution_id=None,
-                latency_ms=latency_ms,
-                input_tokens=len(prompt) // 4,
-                output_tokens=len(response.text) // 4,
-                cost=0.0,
-                status="success"
-            )
-            ai_platform_service.log_explainability(
-                db=db,
-                execution_id=None,
-                inputs={"text_len": len(doc_text)},
-                retrieved_evidence={},
-                rules_used={},
-                prompt_version=self.prompt_version,
-                model_version=model_name,
-                confidence=0.95,
-                reasoning="Extracted metadata fields and quality scores",
-                output_schema=None
-            )
-            return ExtractionMetadataOutput(**data)
+            if response_text and "mock" not in response_text:
+                try:
+                    data = json.loads(response_text)
+                    logger.info(f"Document metadata successfully analyzed via Groq. Latency: {latency_ms:.2f}ms")
+                    return ExtractionMetadataOutput(**data)
+                except (json.JSONDecodeError, TypeError, ValueError):
+                    logger.warning("Could not parse Groq metadata response. Using mock.")
+                    return self._mock_document_metadata()
+            
+            return self._mock_document_metadata()
         except Exception as e:
-            logger.error(f"Failed to parse model metadata output: {str(e)}")
+            logger.error(f"Failed to analyze document metadata: {str(e)}")
             return self._mock_document_metadata()
         finally:
             if own_db:
