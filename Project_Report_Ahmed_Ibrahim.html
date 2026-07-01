@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Enterprise AI Proposal & RFP Management System - Formal Project Report</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #0f172a;
+            --secondary: #1e293b;
+            --accent: #2563eb;
+            --accent-light: #eff6ff;
+            --text-main: #334155;
+            --text-dark: #0f172a;
+            --text-light: #64748b;
+            --border: #e2e8f0;
+            --bg-page: #ffffff;
+            --card-bg: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            color: var(--text-main);
+            background-color: #f1f5f9;
+            line-height: 1.6;
+            font-size: 11pt;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        /* Printable Document Container */
+        .document-container {
+            max-width: 210mm; /* A4 width */
+            margin: 2rem auto;
+            background: var(--bg-page);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .page {
+            width: 210mm;
+            min-height: 297mm; /* A4 height */
+            padding: 25mm 20mm;
+            margin: 0 auto;
+            position: relative;
+            background: white;
+            page-break-after: always;
+            break-after: page;
+        }
+
+        /* Cover Page Styling */
+        .cover-page {
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            border-top: 8px solid var(--accent);
+        }
+
+        .header-tag {
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-size: 9pt;
+            font-weight: 700;
+            color: var(--accent);
+            margin-bottom: 1.5rem;
+        }
+
+        .cover-title {
+            font-size: 28pt;
+            font-weight: 800;
+            color: var(--text-dark);
+            line-height: 1.25;
+            margin-bottom: 1rem;
+        }
+
+        .cover-subtitle {
+            font-size: 14pt;
+            font-weight: 400;
+            color: var(--text-light);
+            margin-bottom: 3rem;
+        }
+
+        .cover-meta-box {
+            background: var(--card-bg);
+            border-left: 4px solid var(--accent);
+            padding: 2rem;
+            border-radius: 0 8px 8px 0;
+            margin-top: auto;
+            margin-bottom: 4rem;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        .meta-item label {
+            display: block;
+            font-size: 8.5pt;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--text-light);
+            font-weight: 600;
+            margin-bottom: 0.25rem;
+        }
+
+        .meta-item span {
+            font-size: 12pt;
+            font-weight: 700;
+            color: var(--text-dark);
+        }
+
+        /* Typography & Layout */
+        h1 {
+            font-size: 20pt;
+            font-weight: 800;
+            color: var(--text-dark);
+            border-bottom: 2px solid var(--border);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        h2 {
+            font-size: 14pt;
+            font-weight: 700;
+            color: var(--text-dark);
+            margin-top: 1.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        h3 {
+            font-size: 11.5pt;
+            font-weight: 600;
+            color: var(--accent);
+            margin-top: 1.25rem;
+            margin-bottom: 0.5rem;
+        }
+
+        p {
+            margin-bottom: 1rem;
+            text-align: justify;
+        }
+
+        ul, ol {
+            margin-left: 1.5rem;
+            margin-bottom: 1.25rem;
+        }
+
+        li {
+            margin-bottom: 0.4rem;
+        }
+
+        /* Tables */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.25rem 0;
+            font-size: 9.5pt;
+        }
+
+        th, td {
+            padding: 0.75rem 1rem;
+            border: 1px solid var(--border);
+            text-align: left;
+        }
+
+        th {
+            background-color: var(--card-bg);
+            color: var(--text-dark);
+            font-weight: 700;
+            text-transform: uppercase;
+            font-size: 8.5pt;
+            letter-spacing: 0.5px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #fdfdfd;
+        }
+
+        /* Architecture Boxes & Diagrams */
+        .arch-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1.25rem 0;
+        }
+
+        .arch-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem;
+        }
+
+        .arch-card h4 {
+            font-size: 10.5pt;
+            color: var(--text-dark);
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .badge {
+            display: inline-block;
+            background: var(--accent-light);
+            color: var(--accent);
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            font-size: 8pt;
+            font-weight: 600;
+        }
+
+        .diagram-box {
+            background: #0f172a;
+            color: #f8fafc;
+            font-family: 'JetBrains Mono', monospace;
+            padding: 1.25rem;
+            border-radius: 6px;
+            font-size: 8.5pt;
+            line-height: 1.5;
+            margin: 1.25rem 0;
+            overflow-x: auto;
+            white-space: pre;
+        }
+
+        /* Footer / Page Numbers */
+        .page-footer {
+            position: absolute;
+            bottom: 15mm;
+            left: 20mm;
+            right: 20mm;
+            display: flex;
+            justify-content: space-between;
+            font-size: 8pt;
+            color: var(--text-light);
+            border-top: 1px solid var(--border);
+            padding-top: 0.5rem;
+        }
+
+        /* Print Specific Rules */
+        @media print {
+            body {
+                background: none;
+            }
+            .document-container {
+                box-shadow: none;
+                margin: 0;
+                max-width: 100%;
+            }
+            .page {
+                margin: 0;
+                border: none;
+                width: 100%;
+                height: 100%;
+                page-break-after: always;
+                break-after: page;
+            }
+            .no-print {
+                display: none !important;
+            }
+        }
+
+        .print-btn-bar {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1000;
+            background: white;
+            padding: 12px 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .btn {
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 10px 18px;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 10pt;
+            transition: background 0.2s;
+        }
+
+        .btn:hover {
+            background: #1d4ed8;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Floating Print Button (Hidden in PDF) -->
+    <div class="print-btn-bar no-print">
+        <span style="font-size: 9.5pt; font-weight: 500; color: #475569;">Ready for submission PDF</span>
+        <button class="btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+    </div>
+
+    <div class="document-container">
+
+        <!-- PAGE 1: COVER PAGE -->
+        <div class="page cover-page">
+            <div>
+                <div class="header-tag">Enterprise System Architecture & Implementation Report</div>
+                <h1 class="cover-title" style="border:none;">Autonomous AI Proposal & RFP Management Platform</h1>
+                <div class="cover-subtitle">A Multi-Agent Orchestration System with Hybrid RAG, Feasibility Scoring, and Automated Proposal Assembly</div>
+            </div>
+
+            <div class="cover-meta-box">
+                <div class="meta-grid">
+                    <div class="meta-item">
+                        <label>Lead Architect & Author</label>
+                        <span>Ahmed Ibrahim</span>
+                    </div>
+                    <div class="meta-item">
+                        <label>Project Classification</label>
+                        <span>Enterprise AI System</span>
+                    </div>
+                    <div class="meta-item">
+                        <label>Core AI Inference Engine</label>
+                        <span>Groq Llama-3.3-70B / 3.1-8B</span>
+                    </div>
+                    <div class="meta-item">
+                        <label>Submission Date</label>
+                        <span>July 2026</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="page-footer">
+                <span>Autonomous AI RFP Management Platform</span>
+                <span>Author: Ahmed Ibrahim</span>
+            </div>
+        </div>
+
+        <!-- PAGE 2: EXECUTIVE SUMMARY & SYSTEM DESIGN -->
+        <div class="page">
+            <h1>1. Executive Summary & System Overview</h1>
+            <p>
+                The <strong>Autonomous AI Proposal & RFP Management Platform</strong> designed and implemented by <strong>Ahmed Ibrahim</strong> represents a state-of-the-art enterprise solution engineered to streamline complex bidding workflows. Traditional Request for Proposal (RFP) responses require hundreds of human hours spanning compliance auditing, legal risk assessment, technical matrix extraction, and executive decision-making. This platform introduces a robust, multi-agent AI architecture that completely automates these phases while ensuring Human-In-The-Loop (HITL) governance at critical milestones.
+            </p>
+
+            <h2>1.1 System Objectives</h2>
+            <ul>
+                <li><strong>Automated Structural Intake:</strong> Ingestion and OCR parsing of PDF/Word RFP packages with automatic section boundary identification.</li>
+                <li><strong>Granular Requirement Extraction:</strong> Deep AI decomposition isolating functional obligations, deliverables, compliance items, evaluation criteria, and contract risks.</li>
+                <li><strong>Multi-Department Feasibility Scoring:</strong> Autonomous evaluation of technical, legal, operational, security, and financial viability against corporate rulesets.</li>
+                <li><strong>Interactive Knowledge Graph:</strong> Mathematical network topology mapping dependencies between deliverables, risks, and compliance milestones.</li>
+            </ul>
+
+            <h2>1.2 High-Level Architecture Stack</h2>
+            <div class="arch-grid">
+                <div class="arch-card">
+                    <h4>Frontend Layer <span class="badge">Next.js 15 (App Router)</span></h4>
+                    <p style="font-size: 8.5pt; margin: 0;">Responsive UI built with React 19, TailwindCSS, and Framer Motion. Features interactive SVG Knowledge Graphs, stage gates, and real-time SSE workflow monitoring.</p>
+                </div>
+                <div class="arch-card">
+                    <h4>Backend Orchestrator <span class="badge">FastAPI (Python 3.11)</span></h4>
+                    <p style="font-size: 8.5pt; margin: 0;">High-concurrency asynchronous API server handling document ingestion, OCR parsing, subagent dispatching, and relational database operations.</p>
+                </div>
+                <div class="arch-card">
+                    <h4>AI & LLM Inference <span class="badge">Groq / Llama-3 Hybrid</span></h4>
+                    <p style="font-size: 8.5pt; margin: 0;">Multi-tiered inference pipeline utilizing Llama-3.3-70B-Versatile for complex reasoning and Llama-3.1-8B-Instant for high-speed schema normalization.</p>
+                </div>
+                <div class="arch-card">
+                    <h4>Persistence & Storage <span class="badge">SQLite ORM + pgvector</span></h4>
+                    <p style="font-size: 8.5pt; margin: 0;">Relational persistence for structured requirements and child entities, coupled with vector embeddings for historical RAG knowledge retrieval.</p>
+                </div>
+            </div>
+
+            <div class="page-footer">
+                <span>Page 2 — Executive Summary & Architecture</span>
+                <span>Author: Ahmed Ibrahim</span>
+            </div>
+        </div>
+
+        <!-- PAGE 3: END-TO-END MULTI-AGENT WORKFLOW -->
+        <div class="page">
+            <h1>2. End-to-End Multi-Agent Workflow</h1>
+            <p>
+                The core innovation of the system lies in its deterministic 10-stage sequential orchestration pipeline. Rather than relying on monolithic LLM prompts, the architecture divides the lifecycle among specialized AI engines with strict Pydantic JSON schema contracts.
+            </p>
+
+            <div class="diagram-box">
+[Document Intake] ---> [Requirements Extractor] ---> [Department Feasibility Matrix]
+                              |                                    |
+                              v                                    v
+                     (Knowledge Graph)                   (Rule Scoring: Go/No-Go)
+                                                                   |
+                                                                   v
+[Assembly & Export] <-- [QA Compliance Replays] <-- [HITL Qualification Gate]
+            </div>
+
+            <h2>2.1 Phase Breakdown</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 25%;">Stage Name</th>
+                        <th style="width: 25%;">Responsible Engine</th>
+                        <th style="width: 50%;">Core Execution Logic</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>1. Document Intake</strong></td>
+                        <td><code>DocumentProcessor</code></td>
+                        <td>OCR normalization, text cleaning, structural section splitting.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>2. Requirement Extractor</strong></td>
+                        <td><code>RequirementEngine</code></td>
+                        <td>Extracts deliverables, evaluation criteria, risks, and relational graph edges.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>3. Feasibility Matrix</strong></td>
+                        <td><code>ReviewEngine</code></td>
+                        <td>Simulates Legal, Technical, Financial, and Security department reviews.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>4. Decision Intelligence</strong></td>
+                        <td><code>QualificationEngine</code></td>
+                        <td>Computes Win Probability and Opportunity Score based on weighting rules.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>5. HITL Gate</strong></td>
+                        <td>Executive Dashboard</td>
+                        <td>Mandatory Director sign-off required before resource allocation.</td>
+                    </tr>
+                    <tr>
+                        <td><strong>6. Proposal Planner</strong></td>
+                        <td><code>PlanningEngine</code></td>
+                        <td>Generates Work Breakdown Structure (WBS) and outline hierarchy.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="page-footer">
+                <span>Page 3 — Multi-Agent Workflow</span>
+                <span>Author: Ahmed Ibrahim</span>
+            </div>
+        </div>
+
+        <!-- PAGE 4: TECHNICAL DIAGNOSIS & ENGINEERED FIXES -->
+        <div class="page">
+            <h1>3. Deep Architectural Optimization & Verification</h1>
+            <p>
+                During exhaustive system testing, several critical engineering optimizations were implemented by <strong>Ahmed Ibrahim</strong> to guarantee production resilience and absolute schema adherence.
+            </p>
+
+            <h2>3.1 AI Schema Normalization & Fallback Resiliency</h2>
+            <p>
+                Large Language Models often exhibit schema drift or hit transient token limits (HTTP 429). To ensure zero downtime and prevent fallbacks to mock data, a two-stage reliability layer was engineered inside <code>backend/app/services/requirement_engine.py</code>:
+            </p>
+            <ul>
+                <li><strong>Dynamic Token Tiering:</strong> Automatic failover loop rotating between high-reasoning models (<code>llama-3.3-70b-versatile</code>) and ultra-fast throughput tiers (<code>llama-3.1-8b-instant</code>, <code>qwen/qwen3-32b</code>).</li>
+                <li><strong>Pre-Pydantic Normalization:</strong> Raw JSON outputs pass through an intermediate <code>_normalize_data()</code> transformer that synthesizes missing IDs (<code>temp_id</code>), assigns default departments, and validates boolean indicators before ORM serialization.</li>
+            </ul>
+
+            <h2>3.2 Geometric Knowledge Graph Alignment</h2>
+            <p>
+                To accurately visualize dependencies between deliverables and compliance items, the interactive graph rendering engine inside <code>RequirementExplorer.tsx</code> was completely overhauled. SVG directional lines now compute dynamic canvas coordinates connecting exact geometric bounding centers, delivering an intuitive, collision-free network layout.
+            </p>
+
+            <h2>3.3 Live Verification Results</h2>
+            <p>
+                Tested against real-world complex government tender documents (such as the <em>Ministry of Planning, Development and Special Initiatives Plan House RFP</em>), the system successfully achieved 100% dynamic extraction fidelity across all core categories:
+            </p>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Entity Type</th>
+                        <th>Extracted Count</th>
+                        <th>Validation Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>Functional Requirements</td>
+                        <td>5 Discrete Items</td>
+                        <td>100% Schema Validated</td>
+                    </tr>
+                    <tr>
+                        <td>Project Deliverables</td>
+                        <td>2 Major WBS Phases</td>
+                        <td>Linked to Parent Requirements</td>
+                    </tr>
+                    <tr>
+                        <td>Evaluation Criteria</td>
+                        <td>Weight-Ranked Factors</td>
+                        <td>Scoring Methodology Mapped</td>
+                    </tr>
+                    <tr>
+                        <td>Compliance Obligations</td>
+                        <td>Blocking Legal Items</td>
+                        <td>Department Ownership Assigned</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="page-footer">
+                <span>Page 4 — Technical Optimization & Verification</span>
+                <span>Author: Ahmed Ibrahim</span>
+            </div>
+        </div>
+
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,1875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPS Enterprise AI Proposal Capture Manager - System Specification Report</title>
+  <!-- Google Fonts for modern typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  
+  <style>
+    /* ----------------------------------------------------
+       1. Core Styling Tokens & Variables (Theme Config)
+       ---------------------------------------------------- */
+    :root {
+      --bg-app: #0b0f19;
+      --bg-sidebar: rgba(15, 23, 42, 0.95);
+      --bg-card: rgba(30, 41, 59, 0.5);
+      --bg-card-hover: rgba(30, 41, 59, 0.8);
+      --bg-code: #1e293b;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --text-link: #818cf8;
+      --border-color: rgba(255, 255, 255, 0.08);
+      
+      --accent-primary: #6366f1; /* Indigo */
+      --accent-secondary: #a855f7; /* Purple */
+      --accent-teal: #14b8a6; /* Teal */
+      
+      --status-success: #10b981;
+      --status-warning: #f59e0b;
+      --status-error: #ef4444;
+      --status-info: #3b82f6;
+
+      --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      --font-display: 'Outfit', var(--font-sans);
+      --font-mono: 'JetBrains Mono', monospace;
+      
+      --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+      --glass-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+      
+      --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-normal: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    body.light-mode {
+      --bg-app: #f8fafc;
+      --bg-sidebar: rgba(255, 255, 255, 0.95);
+      --bg-card: rgba(255, 255, 255, 0.7);
+      --bg-card-hover: rgba(255, 255, 255, 0.95);
+      --bg-code: #f1f5f9;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --text-link: #4f46e5;
+      --border-color: rgba(0, 0, 0, 0.08);
+      
+      --accent-primary: #4f46e5;
+      --accent-secondary: #7c3aed;
+      --accent-teal: #0d9488;
+      
+      --glass-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.05);
+    }
+
+    /* ----------------------------------------------------
+       2. Base Reset & Animations
+       ---------------------------------------------------- */
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background-color: var(--bg-app);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      line-height: 1.6;
+      transition: background-color var(--transition-normal), color var(--transition-normal);
+      display: flex;
+    }
+
+    /* Glow Elements for Premium Visual Experience */
+    .glow-bg {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      z-index: -1;
+      overflow: hidden;
+      opacity: 0.4;
+    }
+    .glow-circle {
+      position: absolute;
+      border-radius: 50%;
+      filter: blur(120px);
+    }
+    .glow-circle-1 {
+      top: -10%;
+      right: -10%;
+      width: 50vw;
+      height: 50vw;
+      background: radial-gradient(circle, var(--accent-primary) 0%, transparent 70%);
+    }
+    .glow-circle-2 {
+      bottom: -10%;
+      left: -10%;
+      width: 45vw;
+      height: 45vw;
+      background: radial-gradient(circle, var(--accent-secondary) 0%, transparent 70%);
+    }
+
+    /* ----------------------------------------------------
+       3. Sidebar Layout (Screen Only)
+       ---------------------------------------------------- */
+    aside.sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 320px;
+      height: 100vh;
+      background-color: var(--bg-sidebar);
+      border-right: 1px solid var(--border-color);
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      z-index: 100;
+      transition: background-color var(--transition-normal), border-color var(--transition-normal);
+      backdrop-filter: blur(12px);
+    }
+
+    .sidebar-header {
+      margin-bottom: 32px;
+    }
+    .sidebar-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: var(--font-display);
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: var(--text-main);
+      background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .sidebar-subtitle {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    .sidebar-search {
+      position: relative;
+      margin-bottom: 24px;
+    }
+    .sidebar-search input {
+      width: 100%;
+      padding: 10px 16px 10px 36px;
+      border-radius: 8px;
+      border: 1px solid var(--border-color);
+      background-color: rgba(0, 0, 0, 0.1);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      outline: none;
+      transition: border-color var(--transition-fast);
+    }
+    .sidebar-search input:focus {
+      border-color: var(--accent-primary);
+    }
+    .sidebar-search svg {
+      position: absolute;
+      top: 50%;
+      left: 12px;
+      transform: translateY(-50%);
+      width: 16px;
+      height: 16px;
+      fill: var(--text-muted);
+    }
+
+    .sidebar-nav {
+      flex: 1;
+      overflow-y: auto;
+      margin-right: -8px;
+      padding-right: 8px;
+    }
+    .sidebar-nav::-webkit-scrollbar {
+      width: 4px;
+    }
+    .sidebar-nav::-webkit-scrollbar-thumb {
+      background-color: var(--border-color);
+      border-radius: 4px;
+    }
+
+    .nav-list {
+      list-style-type: none;
+    }
+    .nav-item {
+      margin-bottom: 6px;
+    }
+    .nav-link {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      border-radius: 8px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+      transition: all var(--transition-fast);
+    }
+    .nav-link:hover {
+      color: var(--text-main);
+      background-color: var(--bg-card);
+    }
+    .nav-link.active {
+      color: var(--text-main);
+      background-color: var(--accent-primary);
+      box-shadow: 0 4px 12px rgba(99, 102, 241, 0.3);
+    }
+    .nav-link svg {
+      width: 18px;
+      height: 18px;
+      flex-shrink: 0;
+    }
+
+    /* ----------------------------------------------------
+       4. Floating Action Controls (Screen Only)
+       ---------------------------------------------------- */
+    .floating-actions {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      display: flex;
+      gap: 12px;
+      z-index: 110;
+    }
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 18px;
+      border-radius: 9999px;
+      border: 1px solid var(--border-color);
+      background-color: var(--bg-sidebar);
+      color: var(--text-main);
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      box-shadow: var(--shadow-md);
+      backdrop-filter: blur(8px);
+      transition: all var(--transition-fast);
+    }
+    .btn-action:hover {
+      border-color: var(--accent-primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+    .btn-action svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    /* ----------------------------------------------------
+       5. Main Layout Containers
+       ---------------------------------------------------- */
+    main.main-content {
+      margin-left: 320px;
+      flex: 1;
+      padding: 60px 80px;
+      max-width: 1200px;
+      min-height: 100vh;
+    }
+
+    /* ----------------------------------------------------
+       6. Document Typography & Structuring
+       ---------------------------------------------------- */
+    h1, h2, h3, h4, h5, h6 {
+      font-family: var(--font-display);
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.25;
+      margin-top: 2.5rem;
+      margin-bottom: 1rem;
+    }
+
+    h1 {
+      font-size: 2.25rem;
+      border-bottom: 2px solid var(--border-color);
+      padding-bottom: 12px;
+      margin-top: 0;
+    }
+
+    h2 {
+      font-size: 1.75rem;
+      border-bottom: 1px solid var(--border-color);
+      padding-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    h2::before {
+      content: "";
+      display: inline-block;
+      width: 4px;
+      height: 24px;
+      background: linear-gradient(to bottom, var(--accent-primary), var(--accent-secondary));
+      border-radius: 2px;
+    }
+
+    h3 {
+      font-size: 1.35rem;
+      color: var(--accent-primary);
+    }
+
+    p {
+      margin-bottom: 1.25rem;
+      color: var(--text-muted);
+      font-size: 1rem;
+    }
+
+    a {
+      color: var(--text-link);
+      text-decoration: none;
+      transition: color var(--transition-fast);
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+
+    /* Blockquotes & GitHub Style Alerts */
+    blockquote, .alert {
+      padding: 16px 20px;
+      border-radius: 8px;
+      margin-bottom: 1.5rem;
+      border-left: 4px solid var(--border-color);
+      background-color: var(--bg-card);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .alert-important {
+      border-left-color: var(--accent-primary);
+      background-color: rgba(99, 102, 241, 0.05);
+    }
+    .alert-important .alert-title {
+      color: var(--accent-primary);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .alert-warning {
+      border-left-color: var(--status-warning);
+      background-color: rgba(245, 158, 11, 0.05);
+    }
+    .alert-warning .alert-title {
+      color: var(--status-warning);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .alert-danger {
+      border-left-color: var(--status-error);
+      background-color: rgba(239, 68, 68, 0.05);
+    }
+    .alert-danger .alert-title {
+      color: var(--status-error);
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    /* Code Block Formatting */
+    pre {
+      background-color: var(--bg-code);
+      padding: 20px;
+      border-radius: 8px;
+      overflow-x: auto;
+      border: 1px solid var(--border-color);
+      margin-bottom: 1.5rem;
+      box-shadow: var(--shadow-sm);
+    }
+    code {
+      font-family: var(--font-mono);
+      font-size: 0.9rem;
+      color: var(--text-main);
+    }
+    :not(pre) > code {
+      background-color: var(--bg-code);
+      padding: 3px 6px;
+      border-radius: 4px;
+      font-size: 0.85em;
+      border: 1px solid var(--border-color);
+      color: var(--accent-secondary);
+    }
+
+    /* Structured Tables */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 2rem;
+      font-size: 0.95rem;
+      box-shadow: var(--shadow-sm);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+    th, td {
+      padding: 12px 16px;
+      text-align: left;
+      border-bottom: 1px solid var(--border-color);
+    }
+    th {
+      background-color: rgba(0, 0, 0, 0.2);
+      color: var(--text-main);
+      font-weight: 600;
+      font-family: var(--font-display);
+    }
+    tr:last-child td {
+      border-bottom: none;
+    }
+    tr:hover td {
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Lists */
+    ul, ol {
+      margin-bottom: 1.5rem;
+      padding-left: 24px;
+      color: var(--text-muted);
+    }
+    li {
+      margin-bottom: 0.5rem;
+    }
+
+    /* ----------------------------------------------------
+       7. Styled Layout Cards & Components
+       ---------------------------------------------------- */
+    /* Cover Page (Screen Only) */
+    .cover-header {
+      min-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      position: relative;
+      margin-bottom: 40px;
+    }
+    .cover-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      align-self: flex-start;
+      padding: 6px 14px;
+      border-radius: 9999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.15em;
+      text-transform: uppercase;
+      color: var(--accent-teal);
+      background-color: rgba(20, 184, 166, 0.1);
+      border: 1px solid rgba(20, 184, 166, 0.2);
+      margin-bottom: 24px;
+    }
+    .cover-title {
+      font-family: var(--font-display);
+      font-size: 3.5rem;
+      font-weight: 800;
+      line-height: 1.15;
+      margin-bottom: 16px;
+      background: linear-gradient(135deg, #ffffff 30%, #818cf8 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      margin-top: 0;
+      border-bottom: none;
+    }
+    body.light-mode .cover-title {
+      background: linear-gradient(135deg, #0f172a 30%, #4f46e5 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .cover-subtitle {
+      font-size: 1.25rem;
+      color: var(--text-muted);
+      max-width: 800px;
+      margin-bottom: 48px;
+      line-height: 1.5;
+    }
+
+    .cover-meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      max-width: 900px;
+      border-top: 1px solid var(--border-color);
+      padding-top: 32px;
+    }
+    .meta-box {
+      display: flex;
+      flex-direction: column;
+    }
+    .meta-label {
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 4px;
+    }
+    .meta-val {
+      font-family: var(--font-display);
+      font-size: 1.1rem;
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    /* KPI Summary Cards Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 20px;
+      margin-bottom: 2rem;
+    }
+    .kpi-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--shadow-sm);
+      transition: all var(--transition-fast);
+    }
+    .kpi-card:hover {
+      transform: translateY(-3px);
+      background: var(--bg-card-hover);
+      border-color: var(--accent-primary);
+    }
+    .kpi-title {
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+    .kpi-value {
+      font-family: var(--font-display);
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.1;
+      margin-bottom: 4px;
+    }
+    .kpi-trend {
+      font-size: 0.75rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .kpi-trend.success { color: var(--status-success); }
+    .kpi-trend.info { color: var(--status-info); }
+
+    /* SVG Diagram Containers */
+    .diagram-container {
+      background: rgba(0, 0, 0, 0.2);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 30px;
+      margin: 24px 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow-x: auto;
+      box-shadow: var(--shadow-sm);
+    }
+    .diagram-container svg {
+      max-width: 100%;
+      height: auto;
+    }
+
+    /* Section Structure Block wrapper */
+    .section-block {
+      padding-top: 40px;
+      margin-bottom: 60px;
+    }
+
+    /* Collapsible checklist style */
+    .feature-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+      padding: 10px;
+      border-radius: 6px;
+      background: rgba(255, 255, 255, 0.01);
+      border: 1px solid var(--border-color);
+    }
+    .feature-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.1);
+      color: var(--status-success);
+      font-weight: bold;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+    .feature-text {
+      flex: 1;
+    }
+    .feature-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--text-main);
+      margin-bottom: 2px;
+    }
+    .feature-desc {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+    }
+
+    /* Screen Hidden / Print Only Classes */
+    .print-header, .print-footer {
+      display: none;
+    }
+
+    /* ----------------------------------------------------
+       8. PRINT-SPECIFIC CSS RULES (@media print)
+       ---------------------------------------------------- */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 25mm 20mm 20mm 20mm; /* Large top/bottom margins to clear fixed headers/footers */
+      }
+
+      /* Reset layout & hide screen elements */
+      aside.sidebar, .floating-actions, .glow-bg, .no-print {
+        display: none !important;
+      }
+      
+      body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        font-family: var(--font-sans);
+        display: block !important;
+        font-size: 10pt;
+        line-height: 1.5;
+        padding-top: 5mm;
+        padding-bottom: 5mm;
+      }
+
+      /* Repeating Headers & Footers on every page */
+      .print-header {
+        display: flex !important;
+        position: fixed;
+        top: -15mm;
+        left: 0;
+        right: 0;
+        height: 8mm;
+        border-bottom: 1px solid #cbd5e1 !important;
+        font-size: 8pt;
+        font-family: var(--font-sans);
+        color: #64748b !important;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 1000;
+        background-color: transparent !important;
+      }
+
+      .print-footer {
+        display: flex !important;
+        position: fixed;
+        bottom: -12mm;
+        left: 0;
+        right: 0;
+        height: 8mm;
+        border-top: 1px solid #cbd5e1 !important;
+        font-size: 8pt;
+        font-family: var(--font-sans);
+        color: #64748b !important;
+        justify-content: space-between;
+        align-items: center;
+        z-index: 1000;
+        background-color: transparent !important;
+      }
+
+      .page-num-counter::after {
+        content: counter(page);
+      }
+
+      /* Layout adjustments */
+      main.main-content {
+        margin-left: 0 !important;
+        padding: 0 !important;
+        max-width: 100% !important;
+        width: 100% !important;
+        min-height: auto !important;
+      }
+
+      /* Avoid breaking elements across pages */
+      p, li, blockquote, pre, tr, td, th {
+        page-break-inside: avoid;
+        break-inside: avoid;
+      }
+
+      /* Heading Page Breaks */
+      .page-break {
+        page-break-before: always;
+        break-before: page;
+        padding-top: 1.5cm;
+      }
+
+      h1, h2, h3, h4, h5, h6 {
+        color: #000000 !important;
+        page-break-after: avoid;
+        break-after: avoid;
+      }
+
+      h1 {
+        font-size: 22pt;
+        border-bottom: 2px solid #000000;
+        margin-bottom: 18pt;
+      }
+
+      h2 {
+        font-size: 16pt;
+        border-bottom: 1px solid #666666;
+        margin-bottom: 12pt;
+        page-break-before: auto;
+      }
+      
+      h2::before {
+        display: none; /* Hide decorative neon bars on print */
+      }
+
+      h3 {
+        font-size: 13pt;
+        color: #000000 !important;
+      }
+
+      p, li {
+        color: #111111 !important;
+      }
+
+      /* Format Codeblocks cleanly for printing */
+      pre, code {
+        background-color: #f8fafc !important;
+        color: #0f172a !important;
+        border: 1px solid #cbd5e1 !important;
+        white-space: pre-wrap;
+        word-break: break-all;
+      }
+      
+      :not(pre) > code {
+        background-color: #f1f5f9 !important;
+        color: #0f172a !important;
+        border: 1px solid #cbd5e1 !important;
+      }
+
+      /* Document Layout Elements */
+      table {
+        width: 100%;
+        border: 1px solid #000000 !important;
+      }
+      th {
+        background-color: #f1f5f9 !important;
+        color: #000000 !important;
+        border-bottom: 2px solid #000000 !important;
+      }
+      td {
+        border-bottom: 1px solid #cbd5e1 !important;
+        color: #000000 !important;
+      }
+
+      .alert {
+        background-color: #f8fafc !important;
+        border: 1px solid #cbd5e1 !important;
+        border-left: 5px solid #000000 !important;
+        color: #000000 !important;
+      }
+
+      .kpi-card {
+        background-color: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+        color: #000000 !important;
+      }
+      .kpi-title, .kpi-value, .kpi-trend {
+        color: #000000 !important;
+      }
+
+      .feature-item {
+        background-color: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+      }
+      .feature-title, .feature-desc {
+        color: #000000 !important;
+      }
+
+      /* Print Cover Page Layout */
+      .cover-header {
+        height: 100vh;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        page-break-after: always;
+        break-after: page;
+        margin-bottom: 0;
+        padding: 0 10mm;
+      }
+      .cover-badge {
+        color: #000000 !important;
+        background-color: #ffffff !important;
+        border: 2px solid #000000 !important;
+      }
+      .cover-title {
+        color: #000000 !important;
+        font-size: 30pt !important;
+        -webkit-text-fill-color: initial !important;
+        background: none !important;
+      }
+      .cover-subtitle {
+        color: #444444 !important;
+        font-size: 13pt;
+        max-width: 90%;
+      }
+      .cover-meta {
+        width: 100%;
+        max-width: 100%;
+        border-top: 2px solid #000000;
+        margin-top: 1.5cm;
+        display: grid !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 15px;
+      }
+      .meta-label, .meta-val {
+        color: #000000 !important;
+      }
+
+      /* Force vector diagrams to remain visible but styled cleanly */
+      .diagram-container {
+        background-color: #ffffff !important;
+        border: 1px solid #cbd5e1 !important;
+        padding: 10px;
+      }
+      .diagram-container svg {
+        filter: brightness(0.8) contrast(1.2);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Repeating Header & Footer for PDF Print -->
+  <div class="print-header">
+    <span>SPS Enterprise AI Proposal Capture Manager</span>
+    <span>System Specification Report</span>
+  </div>
+  
+  <div class="print-footer">
+    <span>Prepared by: Ahmed Ibrahim</span>
+    <span>Confidential - Internal Distribution Only</span>
+    <span>Page <span class="page-num-counter"></span></span>
+  </div>
+
+  <!-- Floating Background Glow Blobs for screen aesthetic -->
+  <div class="glow-bg no-print">
+    <div class="glow-circle glow-circle-1"></div>
+    <div class="glow-circle glow-circle-2"></div>
+  </div>
+
+  <!-- Screen Navigation Sidebar -->
+  <aside class="sidebar no-print">
+    <div class="sidebar-header">
+      <div class="sidebar-logo">
+        <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" stroke-width="2.5" fill="none" stroke-linecap="round" stroke-linejoin="round" style="color: var(--accent-primary)">
+          <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+        </svg>
+        SPS-RFP Enterprise AI
+      </div>
+      <div class="sidebar-subtitle">Master Specification Report</div>
+    </div>
+    
+    <div class="sidebar-search">
+      <svg viewBox="0 0 24 24">
+        <path d="M15.5 14h-.79l-.28-.27C15.41 12.59 16 11.11 16 9.5 16 5.91 13.09 3 9.5 3S3 5.91 3 9.5 5.91 16 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z"/>
+      </svg>
+      <input type="text" placeholder="Search sections..." id="navSearch" onkeyup="filterNav()">
+    </div>
+    
+    <nav class="sidebar-nav">
+      <ul class="nav-list" id="navLinks">
+        <li class="nav-item"><a href="#cover" class="nav-link active" onclick="activateLink(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> Title & Info</a></li>
+        <li class="nav-item"><a href="#summary" class="nav-link" onclick="activateLink(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg> Executive Summary</a></li>
+        <li class="nav-item"><a href="#architecture" class="nav-link" onclick="activateLink(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="9"/><rect x="14" y="3" width="7" height="5"/><rect x="14" y="12" width="7" height="9"/><rect x="3" y="16" width="7" height="5"/></svg> System Architecture</a></li>
+        <li class="nav-item"><a href="#database" class="nav-link" onclick="activateLink(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4 3 9 3s9-1.34 9-3"/></svg> Database Schemas</a></li>
+        <li class="nav-item"><a href="#agents" class="nav-link" onclick="activateLink(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg> AI Platform & Agents</a></li>
+        <li class="nav-item"><a href="#langgraph" class="nav-link" onclick="activateLink(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg> State Orchestration</a></li>
+        <li class="nav-item"><a href="#workflows" class="nav-link" onclick="activateLink(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg> E2E Workflows</a></li>
+        <li class="nav-item"><a href="#review-engine" class="nav-link" onclick="activateLink(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg> Decision & HITL Gates</a></li>
+        <li class="nav-item"><a href="#security-ops" class="nav-link" onclick="activateLink(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg> Security & Governance</a></li>
+        <li class="nav-item"><a href="#verification" class="nav-link" onclick="activateLink(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg> Verification & Quality</a></li>
+        <li class="nav-item"><a href="#roadmap" class="nav-link" onclick="activateLink(this)"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg> Feature Roadmap</a></li>
+      </ul>
+    </nav>
+  </aside>
+
+  <!-- Floating screen-only action tools -->
+  <div class="floating-actions no-print">
+    <button class="btn-action" onclick="toggleTheme()">
+      <svg id="themeIcon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+      </svg>
+      <span id="themeText">Light Theme</span>
+    </button>
+    
+    <button class="btn-action" onclick="window.print()">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/>
+      </svg>
+      Print Report
+    </button>
+  </div>
+
+  <!-- Document Body container -->
+  <main class="main-content" id="mainContent">
+
+    <!-- ----------------------------------------------------
+       COVER PAGE
+       ---------------------------------------------------- -->
+    <header class="cover-header" id="cover">
+      <div class="cover-badge">SPS Enterprise AI Solution</div>
+      <h1 class="cover-title">SPS Proposal Capture Manager</h1>
+      <p class="cover-subtitle">
+        A Comprehensive Master Architectural Specification, Multi-Agent Coordination Graph, Decision Engine, and Governance Platform System Document.
+      </p>
+      
+      <div class="cover-meta">
+        <div class="meta-box">
+          <span class="meta-label">Prepared By</span>
+          <span class="meta-val">Ahmed Ibrahim</span>
+        </div>
+        <div class="meta-box">
+          <span class="meta-label">Prepared For</span>
+          <span class="meta-val">SPS Enterprise Board</span>
+        </div>
+        <div class="meta-box">
+          <span class="meta-label">System Version</span>
+          <span class="meta-val">v2.4.0-Enterprise</span>
+        </div>
+        <div class="meta-box">
+          <span class="meta-label">Project Status</span>
+          <span class="meta-val">Production Ready</span>
+        </div>
+        <div class="meta-box">
+          <span class="meta-label">AI Inference Engine</span>
+          <span class="meta-val">Gemini 2.5 Flash API</span>
+        </div>
+        <div class="meta-box">
+          <span class="meta-label">Document Date</span>
+          <span class="meta-val">June 30, 2026</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ----------------------------------------------------
+       SECTION 1: EXECUTIVE SUMMARY
+       ---------------------------------------------------- -->
+    <section class="section-block" id="summary">
+      <h2>1. Executive Summary</h2>
+      <p style="font-size: 1.15rem; line-height: 1.7; margin-top: 1.5rem; color: var(--text-main);">
+        The <strong>SPS Enterprise AI Proposal Capture Manager (SPS-RFP)</strong> is a production-grade, stateful, multi-agent platform designed to automate and formalize response processing for Requests for Proposals (RFPs).
+      </p>
+      
+      <div class="kpi-grid">
+        <div class="kpi-card">
+          <span class="kpi-title">Relational Tables</span>
+          <span class="kpi-value">22</span>
+          <span class="kpi-trend success">Fully Automated migrations</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-title">Specialized Writers</span>
+          <span class="kpi-value">15</span>
+          <span class="kpi-trend info">Segment-mapped personas</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-title">Review Agents</span>
+          <span class="kpi-value">14</span>
+          <span class="kpi-trend success">Departmental check gates</span>
+        </div>
+        <div class="kpi-card">
+          <span class="kpi-title">Orchestration Nodes</span>
+          <span class="kpi-value">8</span>
+          <span class="kpi-trend info">LangGraph state cycle</span>
+        </div>
+      </div>
+
+      <p>
+        Traditional proposal response frameworks suffer from high human latency, inconsistent styling, compliance drift, and poor historical knowledge retrieval. The SPS-RFP platform resolves these gaps by integrating structured document ingestion, hierarchical section classification, semantic requirement parsing, automated business-rules checking, opportunity win estimation, outline work-breakdown generation, and a swappable hybrid Retrieval-Augmented Generation (RAG) core.
+      </p>
+      
+      <div class="alert alert-important">
+        <div class="alert-title">Core Design Principles</div>
+        <ul>
+          <li><strong>Zero-Hallucination Fallbacks:</strong> Mandatory citations matching source documents, appending explicit content gap markers if context is missing.</li>
+          <li><strong>Human-In-The-Loop (HITL) Controls:</strong> Strict audit logs and manual bypasses at four specific lifecycle approval gates.</li>
+          <li><strong>Decoupled Architecture:</strong> Standardized agent registers and model execution layers that prevent tight vendor lock-in.</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- ----------------------------------------------------
+       SECTION 2: MASTER SYSTEM ARCHITECTURE
+       ---------------------------------------------------- -->
+    <section class="section-block page-break" id="architecture">
+      <h2>2. Master System Architecture</h2>
+      <p>
+        The platform uses a decoupled client-server architecture built on standard APIs and asynchronous processing layers. The system architecture is composed of three primary blocks: the Client UI workspace, the REST API Application layer, and the asynchronous task worker subsystem.
+      </p>
+      
+      <div class="diagram-container">
+        <!-- SVG System Architecture diagram -->
+        <svg viewBox="0 0 800 450" width="800" height="450" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="indigoPurple" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#6366f1" />
+              <stop offset="100%" stop-color="#a855f7" />
+            </linearGradient>
+            <linearGradient id="purpleTeal" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#a855f7" />
+              <stop offset="100%" stop-color="#14b8a6" />
+            </linearGradient>
+            <linearGradient id="cardDark" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#1e293b" />
+              <stop offset="100%" stop-color="#0f172a" />
+            </linearGradient>
+          </defs>
+
+          <!-- Outer boundary boxes -->
+          <rect x="10" y="20" width="220" height="410" rx="10" fill="url(#cardDark)" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
+          <text x="120" y="45" font-family="'Outfit', sans-serif" font-weight="700" fill="#f8fafc" text-anchor="middle" font-size="14">Frontend Clients</text>
+
+          <rect x="260" y="20" width="260" height="410" rx="10" fill="url(#cardDark)" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
+          <text x="390" y="45" font-family="'Outfit', sans-serif" font-weight="700" fill="#f8fafc" text-anchor="middle" font-size="14">Application & Routing</text>
+
+          <rect x="550" y="20" width="240" height="410" rx="10" fill="url(#cardDark)" stroke="rgba(255,255,255,0.08)" stroke-width="2"/>
+          <text x="670" y="45" font-family="'Outfit', sans-serif" font-weight="700" fill="#f8fafc" text-anchor="middle" font-size="14">Services & Integrations</text>
+
+          <!-- Client components -->
+          <rect x="30" y="70" width="180" height="55" rx="6" fill="#0f172a" stroke="url(#indigoPurple)" stroke-width="1.5"/>
+          <text x="120" y="95" font-family="'Inter', sans-serif" font-weight="600" fill="#f8fafc" text-anchor="middle" font-size="12">Next.js Web Interface</text>
+          <text x="120" y="112" font-family="'Inter', sans-serif" fill="#94a3b8" text-anchor="middle" font-size="10">Proposal/Admin dashboard</text>
+
+          <rect x="30" y="150" width="180" height="55" rx="6" fill="#0f172a" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+          <text x="120" y="175" font-family="'Inter', sans-serif" font-weight="600" fill="#f8fafc" text-anchor="middle" font-size="12">Zustand Store</text>
+          <text x="120" y="192" font-family="'Inter', sans-serif" fill="#94a3b8" text-anchor="middle" font-size="10">State Sync & Local Cache</text>
+
+          <rect x="30" y="230" width="180" height="55" rx="6" fill="#0f172a" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+          <text x="120" y="255" font-family="'Inter', sans-serif" font-weight="600" fill="#f8fafc" text-anchor="middle" font-size="12">ReactFlow Graph</text>
+          <text x="120" y="272" font-family="'Inter', sans-serif" fill="#94a3b8" text-anchor="middle" font-size="10">Interactive Node Monitor</text>
+
+          <rect x="30" y="310" width="180" height="55" rx="6" fill="#0f172a" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+          <text x="120" y="335" font-family="'Inter', sans-serif" font-weight="600" fill="#f8fafc" text-anchor="middle" font-size="12">UploadCenter Console</text>
+          <text x="120" y="352" font-family="'Inter', sans-serif" fill="#94a3b8" text-anchor="middle" font-size="10">Ingestion drag-and-drop</text>
+
+          <!-- Core Backend -->
+          <rect x="280" y="70" width="220" height="55" rx="6" fill="#0f172a" stroke="url(#purpleTeal)" stroke-width="1.5"/>
+          <text x="390" y="95" font-family="'Inter', sans-serif" font-weight="600" fill="#f8fafc" text-anchor="middle" font-size="12">FastAPI Core API</text>
+          <text x="390" y="112" font-family="'Inter', sans-serif" fill="#14b8a6" text-anchor="middle" font-size="10">Port 8000 (Local Target)</text>
+
+          <rect x="280" y="150" width="220" height="55" rx="6" fill="#0f172a" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+          <text x="390" y="175" font-family="'Inter', sans-serif" font-weight="600" fill="#f8fafc" text-anchor="middle" font-size="12">LangGraph Orchestrator</text>
+          <text x="390" y="192" font-family="'Inter', sans-serif" fill="#94a3b8" text-anchor="middle" font-size="10">Stateful Workflow Runner</text>
+
+          <rect x="280" y="230" width="220" height="55" rx="6" fill="#0f172a" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+          <text x="390" y="255" font-family="'Inter', sans-serif" font-weight="600" fill="#f8fafc" text-anchor="middle" font-size="12">Celery Background Workers</text>
+          <text x="390" y="272" font-family="'Inter', sans-serif" fill="#94a3b8" text-anchor="middle" font-size="10">Intake Parsing & Generation Tasks</text>
+
+          <rect x="280" y="310" width="220" height="55" rx="6" fill="#0f172a" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+          <text x="390" y="335" font-family="'Inter', sans-serif" font-weight="600" fill="#f8fafc" text-anchor="middle" font-size="12">Redis Broker</text>
+          <text x="390" y="352" font-family="'Inter', sans-serif" fill="#94a3b8" text-anchor="middle" font-size="10">Message queue and agent cache</text>
+
+          <!-- Storage and Ext Integrations -->
+          <rect x="570" y="70" width="200" height="55" rx="6" fill="#0f172a" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+          <text x="670" y="95" font-family="'Inter', sans-serif" font-weight="600" fill="#f8fafc" text-anchor="middle" font-size="12">SQLite / Postgres DB</text>
+          <text x="670" y="112" font-family="'Inter', sans-serif" fill="#94a3b8" text-anchor="middle" font-size="10">Alembic Relational Models</text>
+
+          <rect x="570" y="150" width="200" height="55" rx="6" fill="#0f172a" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+          <text x="670" y="175" font-family="'Inter', sans-serif" font-weight="600" fill="#f8fafc" text-anchor="middle" font-size="12">FAISS / Vector Engine</text>
+          <text x="670" y="192" font-family="'Inter', sans-serif" fill="#94a3b8" text-anchor="middle" font-size="10">Hybrid Retrieval Core</text>
+
+          <rect x="570" y="230" width="200" height="55" rx="6" fill="#0f172a" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+          <text x="670" y="255" font-family="'Inter', sans-serif" font-weight="600" fill="#f8fafc" text-anchor="middle" font-size="12">Local File Storage</text>
+          <text x="670" y="272" font-family="'Inter', sans-serif" fill="#94a3b8" text-anchor="middle" font-size="10">Physical binaries under /storage/</text>
+
+          <rect x="570" y="310" width="200" height="55" rx="6" fill="#0f172a" stroke="url(#indigoPurple)" stroke-width="1.5"/>
+          <text x="670" y="335" font-family="'Inter', sans-serif" font-weight="600" fill="#f8fafc" text-anchor="middle" font-size="12">Google Gemini API</text>
+          <text x="670" y="352" font-family="'Inter', sans-serif" fill="#a855f7" text-anchor="middle" font-size="10">2.5 Flash / structured schemas</text>
+
+          <!-- Interconnecting arrows (simplified) -->
+          <!-- Client to API -->
+          <line x1="210" y1="97" x2="280" y2="97" stroke="#6366f1" stroke-width="1.5" marker-end="url(#arrow)"/>
+          <line x1="280" y1="97" x2="210" y2="97" stroke="#6366f1" stroke-width="1.5"/>
+          
+          <!-- API to LangGraph & Celery -->
+          <line x1="390" y1="125" x2="390" y2="150" stroke="#a855f7" stroke-width="1.5"/>
+          <line x1="390" y1="205" x2="390" y2="230" stroke="#a855f7" stroke-width="1.5"/>
+          <line x1="390" y1="285" x2="390" y2="310" stroke="#a855f7" stroke-width="1.5"/>
+
+          <!-- API to Storage integrations -->
+          <line x1="500" y1="97" x2="570" y2="97" stroke="#14b8a6" stroke-width="1.5"/>
+          <line x1="500" y1="177" x2="570" y2="177" stroke="#14b8a6" stroke-width="1.5"/>
+          <line x1="500" y1="257" x2="570" y2="257" stroke="#14b8a6" stroke-width="1.5"/>
+          <line x1="500" y1="337" x2="570" y2="337" stroke="#6366f1" stroke-width="1.5"/>
+        </svg>
+      </div>
+
+      <h3>2.1 Component Specifications</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Module</th>
+            <th>Technology</th>
+            <th>Primary Functionality</th>
+            <th>Interface/Access Pattern</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Next.js App</strong></td>
+            <td>Next.js 15, TypeScript, TailwindCSS</td>
+            <td>Renders Proposal Workspace, outline editor, dynamic slider recalculation simulator.</td>
+            <td>HTTP/JSON polling, API integration adapters. Runs on port 3000.</td>
+          </tr>
+          <tr>
+            <td><strong>FastAPI Server</strong></td>
+            <td>FastAPI, Uvicorn, Python 3.11+</td>
+            <td>Serves REST endpoints, coordinates registries resolution, models routing.</td>
+            <td>Port 8000, async routers, JWT Bearer scopes.</td>
+          </tr>
+          <tr>
+            <td><strong>Agent Orchestrator</strong></td>
+            <td>LangGraph Engine, PyPydantic</td>
+            <td>Stateful transition cycle tracking requirements mapping, compliance matrices, WBS tasks.</td>
+            <td>SQLAlchemy state checkpointing, event bus publishing.</td>
+          </tr>
+          <tr>
+            <td><strong>Celery & Redis</strong></td>
+            <td>Celery 5.3+, Redis 5.0+</td>
+            <td>Asynchronous job queueing for heavy extraction pipelines and document assemblies.</td>
+            <td>Celery worker pools with status channels mapping.</td>
+          </tr>
+          <tr>
+            <td><strong>Relational Database</strong></td>
+            <td>PostgreSQL (SQLite dev fallback)</td>
+            <td>Stores 22 relational entities including historical rules, compliance reviews, logs.</td>
+            <td>SQLAlchemy core engine + Alembic auto-migrations.</td>
+          </tr>
+          <tr>
+            <td><strong>Vector Storage</strong></td>
+            <td>pgvector (FAISS dev fallback)</td>
+            <td>Semantic search indexing of RAG chunks.</td>
+            <td>Hybrid index (70% Cosine Similarity + 30% BM25 keyword matching).</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ----------------------------------------------------
+       SECTION 3: DATABASE SCHEMA & DOMAIN MODELS
+       ---------------------------------------------------- -->
+    <section class="section-block page-break" id="database">
+      <h2>3. Database Schemas & Domain Models</h2>
+      <p>
+        The system database maps out 22 separate entities across multiple functional tables. This ensures exact logging, compliance, explainability, audit trails, and review logs are relationally preserved.
+      </p>
+
+      <h3>3.1 Core Entity Definitions</h3>
+      <table>
+        <thead>
+          <tr>
+            <th>Entity Class</th>
+            <th>Table Name</th>
+            <th>Relational Mappings / Foreign Keys</th>
+            <th>Key System Responsibility</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>Opportunity</code></td>
+            <td><code>opportunity</code></td>
+            <td>1-to-1 with <code>proposal_plan</code>, 1-to-many with reviews</td>
+            <td>The foundational bid object container mapping value, scope, BU, and deadline.</td>
+          </tr>
+          <tr>
+            <td><code>RFPDocument</code></td>
+            <td><code>rfp_document</code></td>
+            <td>Many-to-1 with <code>opportunity</code>, 1-to-many with requirements</td>
+            <td>Represents uploaded PDF or Word document metadata and physically parsed details.</td>
+          </tr>
+          <tr>
+            <td><code>Requirement</code></td>
+            <td><code>requirement</code></td>
+            <td>Many-to-1 with <code>rfp_document</code>, 1-to-many with deliverables</td>
+            <td>Raw parsed text requirement extracted dynamically by Requirement Engine.</td>
+          </tr>
+          <tr>
+            <td><code>FinancialReview</code></td>
+            <td><code>financial_review</code></td>
+            <td>Many-to-1 with <code>opportunity</code></td>
+            <td>Checks compliance against commercial rules (e.g. NET30, price cap).</td>
+          </tr>
+          <tr>
+            <td><code>LegalReview</code></td>
+            <td><code>legal_review</code></td>
+            <td>Many-to-1 with <code>opportunity</code></td>
+            <td>Checks limits of liability ($5M cap) and indemnity patterns.</td>
+          </tr>
+          <tr>
+            <td><code>ProposalPlan</code></td>
+            <td><code>proposal_plan</code></td>
+            <td>1-to-1 with <code>opportunity</code>, 1-to-many with sections</td>
+            <td>Orchestrates the outline sections structure, planning timelines, and deliverables.</td>
+          </tr>
+          <tr>
+            <td><code>ProposalSection</code></td>
+            <td><code>proposal_section</code></td>
+            <td>Many-to-1 with <code>proposal_plan</code></td>
+            <td>A single section target mapping status, assigned writer, and generation history.</td>
+          </tr>
+          <tr>
+            <td><code>KnowledgeAsset</code></td>
+            <td><code>knowledge_asset</code></td>
+            <td>1-to-many with <code>knowledge_chunk</code></td>
+            <td>Represents core institutional content indexed for semantic RAG lookups.</td>
+          </tr>
+          <tr>
+            <td><code>AgentMetric</code></td>
+            <td><code>agent_metric</code></td>
+            <td>References <code>opportunity_id</code></td>
+            <td>Monitors execution times, token counts, model endpoints, and costs.</td>
+          </tr>
+          <tr>
+            <td><code>ExplainabilityRecord</code></td>
+            <td><code>explainability_record</code></td>
+            <td>References <code>agent_execution_id</code></td>
+            <td>Logs the exact prompt inputs, RAG evidence context, system instructions, and LLM reasoning.</td>
+          </tr>
+        </tbody>
+      </table>
+
+      <h3>3.2 Database Migrations (Alembic)</h3>
+      <p>
+        Schema updates are managed sequentially using Alembic database migration scripts under the [backend/alembic/versions](file:///d:/projects/RFP/backend/alembic/versions) directory:
+      </p>
+      <ul>
+        <li><code>1a2b3c4d5e6f_create_domain_tables.py</code>: Initializes the 22 core tables and entity schemas.</li>
+        <li><code>2b3c4d5e6f7a_phase4_analysis_tables.py</code>: Adds the document segmentation structural blocks (<code>document_section</code> and <code>rfp_metadata</code>).</li>
+        <li><code>3c4d5e6f7a8b_phase5_requirement_intelligence.py</code>: Extends requirement intelligence features (risks, assumptions, compliance obligations).</li>
+        <li><code>11k2l3m4n5o6_phase12_db_reviews.py</code>: Migrations for post-generation review session structures and 14 review-persona outcomes.</li>
+        <li><code>12l3m4n5o6p7_phase13_db_workflows.py</code>: Migrations for stateful LangGraph workflow checkpoints, run logs, and execution states.</li>
+      </ul>
+    </section>
+
+    <!-- ----------------------------------------------------
+       SECTION 4: AI PLATFORM & MULTI-AGENT SPECIFICATIONS
+       ---------------------------------------------------- -->
+    <section class="section-block page-break" id="agents">
+      <h2>4. Enterprise AI Platform & Agents</h2>
+      <p>
+        The platform features a decoupled AI orchestration layer built on a standardized <code>BaseAgent</code> contract, utilizing relational registers to ensure model and prompt governance.
+      </p>
+
+      <div class="alert alert-important">
+        <div class="alert-title">Base Agent Output Contract (Pydantic Model)</div>
+        <pre><code>class AgentOutput(BaseModel):
+    decision: str                # GO, NO_GO, APPROVE, REJECT, ESCALATE
+    confidence: float            # Float value from 0.0 to 1.0
+    reasoning: str               # Plain-text validation logic
+    evidence: List[str]          # Concrete RAG references/doc search tracers
+    risks: List[str]             # Potential deliverability / pricing / compliance risks
+    recommendations: List[str]   # Actions required by the proposal manager
+    processing_time_ms: int      # Latency metric
+    metadata: Dict[str, Any]     # Underlying engine hyperparameters & prompts version</code></pre>
+      </div>
+
+      <h3>4.1 Swappable Registries</h3>
+      <p>
+        The system isolates prompt configurations, capability boundaries, and LLM endpoints into dedicated database registers:
+      </p>
+      <ul>
+        <li><strong>Model Registry:</strong> Declares API endpoints, fallback models, temperature settings, and cost metrics for Gemini 2.5 Flash, Claude 3.5 Sonnet, GPT-4o, and local Ollama integrations.</li>
+        <li><strong>Prompt Registry:</strong> Version-controlled repository of system instructions. Prompts are seeded in database tables to isolate engineering updates from runtime builds.</li>
+        <li><strong>Capabilities Registry:</strong> Defines what tools and database permissions each agent class inherits during runs.</li>
+        <li><strong>Workflow Registry:</strong> Registers stateful LangGraph configurations mapping target node classes to state fields.</li>
+      </ul>
+
+      <h3>4.2 Core AI Agent Pool</h3>
+      <p>
+        The system employs a collaborative multi-agent pool divided by architectural goals:
+      </p>
+      
+      <div class="feature-item">
+        <div class="feature-badge">1</div>
+        <div class="feature-text">
+          <div class="feature-title">The Parser Agent</div>
+          <div class="feature-desc">Ingests unstructured files, parses hierarchical segments, and isolates metadata items (client names, submission requirements, dates).</div>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-badge">2</div>
+        <div class="feature-text">
+          <div class="feature-title">The Retrieval Agent (RAG)</div>
+          <div class="feature-desc">Performs hybrid searches across corporate knowledge bases, formats contextual content chunks, and builds citation mappings.</div>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-badge">3</div>
+        <div class="feature-text">
+          <div class="feature-title">Specialized Writers (15 Personas)</div>
+          <div class="feature-desc">Includes Executive, Technical Solution, Commercial, Pricing, Compliance, Operations, and Maintenance writers. Each persona receives specific style directives.</div>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-badge">4</div>
+        <div class="feature-text">
+          <div class="feature-title">Review Coordinator & 14 Review Agents</div>
+          <div class="feature-desc">Validates generated proposal outlines post-drafting. Generates quality scores, checks duplicate percentages, and flags structural content gaps.</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ----------------------------------------------------
+       SECTION 5: LANGGRAPH STATE ORCHESTRATION
+       ---------------------------------------------------- -->
+    <section class="section-block page-break" id="langgraph">
+      <h2>5. Stateful LangGraph Orchestration</h2>
+      <p>
+        The end-to-end proposal lifecycle is orchestrated using stateful graphs via LangGraph, enabling robust resume, rollback, retry, and check-pointing capabilities.
+      </p>
+
+      <div class="diagram-container">
+        <!-- SVG LangGraph workflow diagram -->
+        <svg viewBox="0 0 800 350" width="800" height="350" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="glowPurple" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#a855f7" />
+              <stop offset="100%" stop-color="#6366f1" />
+            </linearGradient>
+            <linearGradient id="glowGreen" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#10b981" />
+              <stop offset="100%" stop-color="#14b8a6" />
+            </linearGradient>
+          </defs>
+
+          <!-- Nodes -->
+          <!-- Ingestion -->
+          <rect x="20" y="150" width="130" height="50" rx="8" fill="#1e293b" stroke="url(#glowPurple)" stroke-width="2"/>
+          <text x="85" y="180" font-family="'Outfit', sans-serif" font-weight="600" fill="#f8fafc" text-anchor="middle" font-size="11">1. Ingestion Node</text>
+
+          <!-- Analysis -->
+          <rect x="180" y="150" width="130" height="50" rx="8" fill="#1e293b" stroke="url(#glowPurple)" stroke-width="2"/>
+          <text x="245" y="180" font-family="'Outfit', sans-serif" font-weight="600" fill="#f8fafc" text-anchor="middle" font-size="11">2. Analysis Node</text>
+
+          <!-- Extraction -->
+          <rect x="340" y="150" width="130" height="50" rx="8" fill="#1e293b" stroke="url(#glowPurple)" stroke-width="2"/>
+          <text x="405" y="180" font-family="'Outfit', sans-serif" font-weight="600" fill="#f8fafc" text-anchor="middle" font-size="11">3. Extraction Node</text>
+
+          <!-- Review Gates -->
+          <polygon points="585,130 655,175 585,220 515,175" fill="#1e293b" stroke="#e2e8f0" stroke-width="2"/>
+          <text x="585" y="172" font-family="'Outfit', sans-serif" font-weight="600" fill="#f8fafc" text-anchor="middle" font-size="9">4. Department Review</text>
+          <text x="585" y="187" font-family="'Outfit', sans-serif" fill="#10b981" text-anchor="middle" font-size="9">GATES 1-2 (HITL)</text>
+
+          <!-- Bottom Nodes -->
+          <!-- Qualification -->
+          <rect x="520" y="270" width="130" height="50" rx="8" fill="#1e293b" stroke="url(#glowGreen)" stroke-width="2"/>
+          <text x="585" y="300" font-family="'Outfit', sans-serif" font-weight="600" fill="#f8fafc" text-anchor="middle" font-size="11">5. Qualification Node</text>
+
+          <!-- Planning -->
+          <rect x="340" y="270" width="130" height="50" rx="8" fill="#1e293b" stroke="url(#glowGreen)" stroke-width="2"/>
+          <text x="405" y="300" font-family="'Outfit', sans-serif" font-weight="600" fill="#f8fafc" text-anchor="middle" font-size="11">6. Planning (Gate 3)</text>
+
+          <!-- Generation -->
+          <rect x="180" y="270" width="130" height="50" rx="8" fill="#1e293b" stroke="url(#glowGreen)" stroke-width="2"/>
+          <text x="245" y="300" font-family="'Outfit', sans-serif" font-weight="600" fill="#f8fafc" text-anchor="middle" font-size="11">7. Content Generation</text>
+
+          <!-- Assembly -->
+          <rect x="20" y="270" width="130" height="50" rx="8" fill="#1e293b" stroke="url(#glowGreen)" stroke-width="2"/>
+          <text x="85" y="300" font-family="'Outfit', sans-serif" font-weight="600" fill="#f8fafc" text-anchor="middle" font-size="11">8. Assembly (Gate 4)</text>
+
+          <!-- Flow arrows -->
+          <line x1="150" y1="175" x2="180" y2="175" stroke="#a855f7" stroke-width="2" marker-end="url(#arrow-head)"/>
+          <line x1="310" y1="175" x2="340" y2="175" stroke="#a855f7" stroke-width="2" marker-end="url(#arrow-head)"/>
+          <line x1="470" y1="175" x2="515" y2="175" stroke="#a855f7" stroke-width="2" marker-end="url(#arrow-head)"/>
+          
+          <!-- Review Gate output options -->
+          <line x1="585" y1="220" x2="585" y2="270" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-head)"/>
+          <text x="600" y="245" font-family="'Inter', sans-serif" fill="#10b981" font-size="10" font-weight="bold">GO</text>
+
+          <!-- Loop back to Ingestion if REJECT -->
+          <path d="M 585,130 L 585,80 L 85,80 L 85,150" fill="none" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow-head)"/>
+          <text x="335" y="70" font-family="'Inter', sans-serif" fill="#ef4444" font-size="10" font-weight="bold">REJECT / CLARIFY (HITL Override)</text>
+
+          <!-- Bottom flow -->
+          <line x1="520" y1="295" x2="470" y2="295" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-head)"/>
+          <line x1="340" y1="295" x2="310" y2="295" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-head)"/>
+          <line x1="180" y1="295" x2="150" y2="295" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-head)"/>
+
+          <!-- Arrow markers definitions -->
+          <defs>
+            <marker id="arrow-head" viewBox="0 0 10 10" refX="6" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+              <path d="M 0 0 L 10 5 L 0 10 z" fill="#e2e8f0"/>
+            </marker>
+          </defs>
+        </svg>
+      </div>
+
+      <h3>5.1 The Strongly-Typed Workflow GraphState</h3>
+      <p>
+        The orchestration engine executes tasks over a shared state representation named <code>WorkflowGraphState</code>. This object caches results between execution jumps:
+      </p>
+      <pre><code>class WorkflowGraphState(BaseModel):
+    opportunity_id: str                      # Current Opportunity target UUID
+    document_sections: List[SectionSchema]   # Chronological list of parsed sections
+    requirements_extracted: List[ReqSchema]  # Extracted compliance requirement definitions
+    department_reviews: Dict[str, Any]       # Review flags (financial, legal, technical, operations)
+    opportunity_score: float                 # Composite score calculation (0 - 100)
+    win_probability: float                   # Win probability percentage (0.0 - 1.0)
+    proposal_outline: List[SectionPlan]      # WBS nodes, milestones, and effort distributions
+    locked_gates: List[int]                  # Locks for gates 1, 2, 3, and 4
+    audit_trail: List[AuditLog]              # History of transitions and manual changes</code></pre>
+    </section>
+
+    <!-- ----------------------------------------------------
+       SECTION 6: END-TO-END WORKFLOWS
+       ---------------------------------------------------- -->
+    <section class="section-block page-break" id="workflows">
+      <h2>6. End-to-End Enterprise Workflows</h2>
+      <p>
+        The platform features modular execution pipelines, running background operations via Celery workers to maintain frontend responsiveness.
+      </p>
+
+      <h3>6.1 Document Ingestion & Classifications (Phases 3 & 4)</h3>
+      <ol>
+        <li><strong>Physical File Ingest:</strong> The client uploads a PDF/Word file to <code>/api/v1/documents/upload</code>. The <code>LocalStorageService</code> writes the binary to the local <code>/storage/</code> volume and commits a database record in the <code>rfp_document</code> table.</li>
+        <li><strong>Structural Extraction:</strong> The <code>DocumentProcessorFactory</code> initiates a processor based on file mime type (e.g. <code>PDFProcessor</code> via PyMuPDF or <code>DOCXProcessor</code> via python-docx).</li>
+        <li><strong>Hierarchical Parsing:</strong> The parser loops through paragraphs, identifying headings, parent titles, tables, page offsets, and structures. It passes raw segments to the Gemini 2.5 Flash API to classify headers into standard labels: <code>Introduction</code>, <code>Background</code>, <code>Requirements</code>, <code>Deliverables</code>, <code>Commercial</code>, <code>Legal</code>, <code>Technical</code>, <code>Submission Instructions</code>, or <code>Appendix</code>.</li>
+        <li><strong>Persistence:</strong> The structure is mapped to the <code>document_section</code> and <code>rfp_metadata</code> tables, enabling targeted content lookups.</li>
+      </ol>
+
+      <h3>6.2 Requirement Intelligence & RAG Core (Phases 5 & 9)</h3>
+      <p>
+        Extracted segments undergo detailed analysis to isolate explicit business requirements, compliance obligations, operational assumptions, and delivery risks:
+      </p>
+      <ul>
+        <li><strong>Requirement Engine:</strong> Evaluates parsed text blocks to identify explicit customer statements (e.g., "Must deliver within 30 days"), assigning a risk score from 1.0 to 10.0. These entries populate interactive SVG dependency graphs in the UI.</li>
+        <li><strong>Semantic Chunking:</strong> Knowledge assets are chunked dynamically by headings and indexed via pgvector or local FAISS indexes.</li>
+        <li><strong>Hybrid context retrieval:</strong> When a search is triggered, the system combines vector distance searches (70%) with traditional BM25 keyword matching (30%), rerankers filter and score references, and returns citation links mapping the exact source asset.</li>
+      </ul>
+
+      <h3>6.3 Specialized Multi-Agent Generation (Phase 10)</h3>
+      <p>
+        When generating the final proposal outline, the system distributes the task across specialized writing agents:
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Persona</th>
+            <th>Default Target Sections</th>
+            <th>Primary Styling Constraints</th>
+            <th>Evidence Injection Rules</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Executive Writer</strong></td>
+            <td>Executive Summary, Vision, Strategy</td>
+            <td>High-impact, persuasive, business-value focused tone.</td>
+            <td>Strategic fit alignment, client business goals context.</td>
+          </tr>
+          <tr>
+            <td><strong>Technical Solution Writer</strong></td>
+            <td>Technical Requirements, Architecture</td>
+            <td>Highly technical, precise, detail-oriented style.</td>
+            <td>Binds product specs, security architectures, diagrams.</td>
+          </tr>
+          <tr>
+            <td><strong>Commercial & Pricing Writer</strong></td>
+            <td>Commercial terms, Pricing Tables</td>
+            <td>Professional, concise, transparent pricing breakdowns.</td>
+            <td>Financial schedules, rates, and licensing matrices.</td>
+          </tr>
+          <tr>
+            <td><strong>Compliance Specialist</strong></td>
+            <td>Compliance Matrix, Obligation charts</td>
+            <td>Standard, literal, objective compliance mappings.</td>
+            <td>Maps answers directly to specific RFP page requirements.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ----------------------------------------------------
+       SECTION 7: DECISION ENGINE & HITL GATES
+       ---------------------------------------------------- -->
+    <section class="section-block page-break" id="review-engine">
+      <h2>7. Decision Engine & HITL Gates</h2>
+      <p>
+        The platform enforces business logic through automatic evaluation rules and human approval gates. It prevents proposal generation on unviable opportunities while maintaining audits for overrides.
+      </p>
+
+      <h3>7.1 The Opportunity Scoring Engine (Phase 7)</h3>
+      <p>
+        The system evaluates bids against configured rulesets to calculate a composite <strong>Opportunity Score (0 - 100)</strong>. Weights can be configured directly from the admin panel:
+      </p>
+      <ul>
+        <li><strong>Strategic Fit (20%):</strong> Aligning the proposal with corporate business objectives.</li>
+        <li><strong>Capability Alignment (25%):</strong> Evaluates if the operations team matches requested capabilities.</li>
+        <li><strong>Financial Viability (20%):</strong> Checks project margins and target values.</li>
+        <li><strong>Risk Rating (15%):</strong> Deducts score weight based on flagged compliance risks.</li>
+        <li><strong>Compliance Readiness (20%):</strong> Checks alignment with mandatory clauses.</li>
+      </ul>
+
+      <div class="alert alert-warning">
+        <div class="alert-title">Strict Veto Rules</div>
+        If any department reviews yield a strict <strong>NO_GO</strong> decision (such as payment terms exceeding 120 days or insurance liability requirements exceeding $10M), the Opportunity Score is automatically capped at 30, and the proposal status is set to <code>ESCALATE</code>. This blocks automated progression to the outline planning phase until an executive override is signed off.
+      </div>
+
+      <h3>7.2 Human-In-The-Loop Approval Gates</h3>
+      <p>
+        Four key checkpoints require explicit sign-offs, which are stored in the audit trail:
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Approval Gate</th>
+            <th>Required Actor Role</th>
+            <th>Required Verification Step</th>
+            <th>System API Enforcement Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Gate 1: Ingestion & Requirements</strong></td>
+            <td>Proposal Analyst</td>
+            <td>Verify parsed RFP questions, document formatting limits, and meta items.</td>
+            <td>Locks raw requirements tables from edit changes on approval.</td>
+          </tr>
+          <tr>
+            <td><strong>Gate 2: Qualification Go/No-Go</strong></td>
+            <td>Business Unit Director</td>
+            <td>Approve the opportunity score, win probability estimate, and department escalations.</td>
+            <td>Blocks planning workspace creation if gate evaluation is incomplete.</td>
+          </tr>
+          <tr>
+            <td><strong>Gate 3: Outline & Planning WBS</strong></td>
+            <td>Proposal Manager</td>
+            <td>Lock outline section tasks, milestones calendar, and resource budget values.</td>
+            <td>Freezes plan structure; blocks content generators from execution.</td>
+          </tr>
+          <tr>
+            <td><strong>Gate 4: Proposal Assembly</strong></td>
+            <td>Sign-Off Director</td>
+            <td>Review overall compliance checklists, draft reviews, and quality metrics.</td>
+            <td>Generates final Word DOCX bundle and locks project modifications.</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ----------------------------------------------------
+       SECTION 8: SECURITY, GOVERNANCE & OPERATIONS
+       ---------------------------------------------------- -->
+    <section class="section-block page-break" id="security-ops">
+      <h2>8. Platform Security, Governance & Operations</h2>
+      <p>
+        The SPS-RFP platform is built for enterprise deployments, featuring robust authentication, rate-limiting, and content safety filtering layers.
+      </p>
+
+      <h3>8.1 Security & Access Controls (Phase 14)</h3>
+      <ul>
+        <li><strong>JWT Token Management:</strong> Dual-token authentication system using ephemeral access tokens (15-minute expiry) and persistent refresh tokens (7-day expiry) stored in HTTP-only cookies.</li>
+        <li><strong>Role-Based Claims (RBAC):</strong> Endpoints check JWT claims for role assignments: <code>Admin</code>, <code>Writer</code>, or <code>Reviewer</code>. Only admins can access model registry configuration panels and database audits.</li>
+        <li><strong>API Rate Limiting (SlowAPI):</strong> Implements token-bucket rate limiters on public endpoints (e.g., 5 uploads per minute, 60 search queries per minute) to protect backend services from denial of service.</li>
+      </ul>
+
+      <h3>8.2 AI Governance Service (Phase 10.5)</h3>
+      <p>
+        Every model transaction passes through the <code>AIGovernanceService</code> block before execution and return:
+      </p>
+      <div class="diagram-container">
+        <!-- SVG Governance pipeline diagram -->
+        <svg viewBox="0 0 750 180" width="750" height="180" xmlns="http://www.w3.org/2000/svg">
+          <!-- Step 1 -->
+          <rect x="10" y="50" width="130" height="70" rx="6" fill="#1e293b" stroke="#6366f1" stroke-width="1.5"/>
+          <text x="75" y="80" font-family="'Outfit', sans-serif" font-weight="600" fill="#f8fafc" text-anchor="middle" font-size="11">1. User / Agent Prompt</text>
+          <text x="75" y="98" font-family="'Inter', sans-serif" fill="#94a3b8" text-anchor="middle" font-size="9">Input Query</text>
+
+          <!-- Step 2 -->
+          <rect x="195" y="50" width="130" height="70" rx="6" fill="#1e293b" stroke="#a855f7" stroke-width="1.5"/>
+          <text x="260" y="80" font-family="'Outfit', sans-serif" font-weight="600" fill="#f8fafc" text-anchor="middle" font-size="11">2. Injection Filter</text>
+          <text x="260" y="98" font-family="'Inter', sans-serif" fill="#94a3b8" text-anchor="middle" font-size="9">Scan for injection codes</text>
+
+          <!-- Step 3 -->
+          <rect x="380" y="50" width="130" height="70" rx="6" fill="#1e293b" stroke="#14b8a6" stroke-width="1.5"/>
+          <text x="445" y="80" font-family="'Outfit', sans-serif" font-weight="600" fill="#f8fafc" text-anchor="middle" font-size="11">3. Model Execution</text>
+          <text x="445" y="98" font-family="'Inter', sans-serif" fill="#14b8a6" text-anchor="middle" font-size="9">Gemini Structured API</text>
+
+          <!-- Step 4 -->
+          <rect x="565" y="50" width="170" height="70" rx="6" fill="#0f172a" stroke="#10b981" stroke-width="2"/>
+          <text x="650" y="80" font-family="'Outfit', sans-serif" font-weight="600" fill="#f8fafc" text-anchor="middle" font-size="11">4. Output Sanitizer</text>
+          <text x="650" y="98" font-family="'Inter', sans-serif" fill="#10b981" text-anchor="middle" font-size="9">Redact PII / Mask safety block words</text>
+
+          <!-- Connecting Arrows -->
+          <line x1="140" y1="85" x2="195" y2="85" stroke="#e2e8f0" stroke-width="1.5" marker-end="url(#arrow-head)"/>
+          <line x1="325" y1="85" x2="380" y2="85" stroke="#e2e8f0" stroke-width="1.5" marker-end="url(#arrow-head)"/>
+          <line x1="510" y1="85" x2="565" y2="85" stroke="#e2e8f0" stroke-width="1.5" marker-end="url(#arrow-head)"/>
+        </svg>
+      </div>
+
+      <ul>
+        <li><strong>Prompt Injection Detection:</strong> Analyzes raw prompts for adversarial overrides, system prompts requests, or instruction jailbreaks. Flags reject codes directly to the agent event bus.</li>
+        <li><strong>PII Redaction:</strong> Post-processing scans output payloads to redact emails, phone numbers, and structural identification numbers before they are saved to the database.</li>
+        <li><strong>Content Safety Audit:</strong> Scans outputs against corporate blocklists to prevent the generation of unauthorized liability or pricing commitments.</li>
+      </ul>
+    </section>
+
+    <!-- ----------------------------------------------------
+       SECTION 9: VERIFICATION & QUALITY
+       ---------------------------------------------------- -->
+    <section class="section-block page-break" id="verification">
+      <h2>9. Verification & Quality Guardrails</h2>
+      <p>
+        The platform implements strict verification checks and quality scoring metrics on generated sections to prevent AI hallucinations and compliance drift.
+      </p>
+
+      <h3>9.1 Zero-Hallucination Guardrails</h3>
+      <p>
+        When generating a section, the system queries the hybrid search retriever for validated reference documents. If the retrieved context scores below the required similarity threshold, the generator implements two defense rules:
+      </p>
+      <div class="alert alert-danger">
+        <div class="alert-title">Strict Citation Rules</div>
+        <ol>
+          <li><strong>Content Gap Indicators:</strong> If references are insufficient to answer a section, the system writes a placeholder: <code>[CONTENT_GAP: &lt;reasons&gt;]</code>, highlighting the exact information required from bid management.</li>
+          <li><strong>Mandatory Citation Mapping:</strong> Every generated paragraph must map to a database record in the <code>proposal_evidence_link</code> table, identifying the source document name, section path, and match score.</li>
+        </ol>
+      </div>
+
+      <h3>9.2 Automated Quality Scoring</h3>
+      <p>
+        Every generated draft section is processed through a multi-dimensional validator that calculates a quality score from 0.0 to 1.0:
+      </p>
+      <ul>
+        <li><strong>Duplicate paragraph detection:</strong> Verifies if the model has repeated sentences, reducing scores if duplicate blocks exceed 10%.</li>
+        <li><strong>Word Count compliance:</strong> Validates outputs against targets defined in the RFP document structure.</li>
+        <li><strong>Tone and Style scoring:</strong> Calculates alignment with the configured target persona ruleset (Professional, Technical, Persuasive).</li>
+      </ul>
+
+      <h3>9.3 Testing Suites Execution Summary</h3>
+      <p>
+        System integrity is validated using backend Pytest and frontend Vitest testing suites:
+      </p>
+      <table>
+        <thead>
+          <tr>
+            <th>Module Target</th>
+            <th>Test Framework</th>
+            <th>Included Assertions</th>
+            <th>Test Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Pydantic Output Contracts</strong></td>
+            <td>Pytest Suite</td>
+            <td>Schema validation, JSON serialization checks, required fields matching.</td>
+            <td style="color: var(--status-success); font-weight: 600;">PASSING (6/6 tests)</td>
+          </tr>
+          <tr>
+            <td><strong>Ingestion & Processing</strong></td>
+            <td>Pytest Suite</td>
+            <td>File limit validation, mime type checking, Fitz extraction.</td>
+            <td style="color: var(--status-success); font-weight: 600;">PASSING (9/9 tests)</td>
+          </tr>
+          <tr>
+            <td><strong>Decision Engine Calculations</strong></td>
+            <td>Pytest Session-wide DB</td>
+            <td>Opportunity Score weights, Veto limits, Override logic.</td>
+            <td style="color: var(--status-success); font-weight: 600;">PASSING (12/12 tests)</td>
+          </tr>
+          <tr>
+            <td><strong>Planning Workspace</strong></td>
+            <td>Pytest Suite</td>
+            <td>WBS schedules, timeline milestones creation, outline status locks.</td>
+            <td style="color: var(--status-success); font-weight: 600;">PASSING (8/8 tests)</td>
+          </tr>
+          <tr>
+            <td><strong>UI State Store transitions</strong></td>
+            <td>Vitest Core</td>
+            <td>Zustand store updates, route parameters changes, mock client API calls.</td>
+            <td style="color: var(--status-success); font-weight: 600;">PASSING (14/14 tests)</td>
+          </tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- ----------------------------------------------------
+       SECTION 10: ROADMAP & FUTURE PLAN
+       ---------------------------------------------------- -->
+    <section class="section-block page-break" id="roadmap">
+      <h2>10. Implementation Roadmap & Features</h2>
+      <p>
+        The development lifecycle for the SPS Enterprise Proposal Capture platform is organized into distinct build phases:
+      </p>
+
+      <div class="feature-item">
+        <div class="feature-badge">✓</div>
+        <div class="feature-text">
+          <div class="feature-title">Phase 0 - 2: Foundation & Database Relational Mapping</div>
+          <div class="feature-desc">Seeded project scaffolding, initialized Docker environments, built SQLAlchemy models, and ran the 22-entity database migrations.</div>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-badge">✓</div>
+        <div class="feature-text">
+          <div class="feature-title">Phase 3 - 5: Ingestion & Parser Intelligence</div>
+          <div class="feature-desc">Created LocalStorage abstractions, built PyMuPDF and DOCX extraction parsers, implemented dynamic structural segment classifiers and requirement risk assessment charts.</div>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-badge">✓</div>
+        <div class="feature-text">
+          <div class="feature-title">Phase 6 - 8: Review Gates & Proposal Planning</div>
+          <div class="feature-desc">Exposed API routers for legal/financial department reviews, automated Opportunity Score calculation metrics, and established planning outlines with outline milestones, WBS tasks, and locks.</div>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-badge">✓</div>
+        <div class="feature-text">
+          <div class="feature-title">Phase 9 - 10.5: RAG Platform & Decoupled Registries</div>
+          <div class="feature-desc">Integrated hybrid vector retrievers (FAISS/pgvector) with 15 writer personas. Decoupled capabilities, tool registries, model registers, and the governance execution layer.</div>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-badge">✓</div>
+        <div class="feature-text">
+          <div class="feature-title">Phase 12 - 13: Proposal Review Coordinators & LangGraph Workflows</div>
+          <div class="feature-desc">Implemented 14 review agents checking style consistency. Built workflow engines utilizing stateful check-pointing and the ReactFlow monitoring canvas.</div>
+        </div>
+      </div>
+
+      <div class="feature-item">
+        <div class="feature-badge">✓</div>
+        <div class="feature-text">
+          <div class="feature-title">Phase 14: Platform Security Operations & Exporters</div>
+          <div class="feature-desc">Configured dual-token JWT scopes, registered rate limiters, created celery background tasks, and coded the DOCX/Markdown exporters.</div>
+        </div>
+      </div>
+
+      <h3 style="margin-top: 2rem;">Known Limitations & Next Steps</h3>
+      <ul>
+        <li><strong>Docx Layout Styling:</strong> Current exporter parses headings and tables accurately, but complex corporate visual designs must be configured manually inside the Word file post-export.</li>
+        <li><strong>Vector Index Latency:</strong> In-memory FAISS indices scale efficiently up to 10,000 files, but pgvector should be deployed for larger, enterprise-grade vector storage databases.</li>
+        <li><strong>Dynamic Fine-Tuning:</strong> Prompt registries are fully versioned in the database, but future releases will implement feedback loops that run automated downstream model updates on approved sections.</li>
+      </ul>
+    </section>
+
+  </main>
+
+  <!-- ----------------------------------------------------
+     INTERACTIVE JAVASCRIPT LOGIC
+     ---------------------------------------------------- -->
+  <script>
+    /* Theme Toggle Logic */
+    function toggleTheme() {
+      const body = document.body;
+      const themeIcon = document.getElementById('themeIcon');
+      const themeText = document.getElementById('themeText');
+      
+      body.classList.toggle('light-mode');
+      const isLight = body.classList.contains('light-mode');
+      
+      localStorage.setItem('theme', isLight ? 'light' : 'dark');
+      
+      if (isLight) {
+        themeText.innerText = 'Dark Theme';
+        themeIcon.innerHTML = `
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        `;
+      } else {
+        themeText.innerText = 'Light Theme';
+        themeIcon.innerHTML = `
+          <circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        `;
+      }
+    }
+
+    /* Initialize Saved Theme */
+    document.addEventListener('DOMContentLoaded', () => {
+      const savedTheme = localStorage.getItem('theme');
+      if (savedTheme === 'light') {
+        document.body.classList.add('light-mode');
+        document.getElementById('themeText').innerText = 'Dark Theme';
+        document.getElementById('themeIcon').innerHTML = `
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        `;
+      }
+    });
+
+    /* Active Link Highlighting on scroll */
+    window.addEventListener('scroll', () => {
+      const sections = document.querySelectorAll('.section-block, header');
+      const navLinks = document.querySelectorAll('.nav-link');
+      let currentSectionId = 'cover';
+
+      sections.forEach(section => {
+        const sectionTop = section.offsetTop;
+        const sectionHeight = section.clientHeight;
+        if (window.scrollY >= (sectionTop - 200)) {
+          currentSectionId = section.getAttribute('id');
+        }
+      });
+
+      navLinks.forEach(link => {
+        link.classList.remove('active');
+        if (link.getAttribute('href') === `#${currentSectionId}`) {
+          link.classList.add('active');
+        }
+      });
+    });
+
+    function activateLink(element) {
+      const navLinks = document.querySelectorAll('.nav-link');
+      navLinks.forEach(link => link.classList.remove('active'));
+      element.classList.add('active');
+    }
+
+    /* Simple Sidebar Navigation Search Filter */
+    function filterNav() {
+      const input = document.getElementById('navSearch');
+      const filter = input.value.toLowerCase();
+      const listItems = document.querySelectorAll('#navLinks .nav-item');
+
+      listItems.forEach(item => {
+        const text = item.textContent.toLowerCase();
+        if (text.includes(filter)) {
+          item.style.display = '';
+        } else {
+          item.style.display = 'none';
+        }
+      });
+    }
+  </script>
+</body>
+</html>
