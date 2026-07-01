@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   db:
     image: postgres:16-alpine
@@ -10,7 +8,7 @@ services:
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: sps_proposal_capture
     ports:
-      - "5432:5432"
+      - "5433:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
     healthcheck:
@@ -21,12 +19,12 @@ services:
 
   backend:
     build:
-      context: ./backend
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: ./backend/Dockerfile
     container_name: sps_capture_backend
     restart: always
     ports:
-      - "8000:8000"
+      - "8001:8000"
     environment:
       - DATABASE_URL=postgresql://postgres:postgres@db:5432/sps_proposal_capture
       - POSTGRES_SERVER=db
@@ -34,9 +32,16 @@ services:
       - POSTGRES_PASSWORD=postgres
       - POSTGRES_DB=sps_proposal_capture
       - ENV=development
+      - GROQ_API_KEY=${GROQ_API_KEY:-your_groq_api_key_here}
     depends_on:
       db:
         condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "python -c \"import sys,urllib.request; r=urllib.request.urlopen('http://localhost:8000/api/v1/health'); sys.exit(0 if getattr(r, 'status', None)==200 else 1)\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
 
 volumes:
   pgdata:
