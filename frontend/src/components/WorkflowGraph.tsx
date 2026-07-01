@@ -7,7 +7,7 @@ interface Node {
   id: string;
   label: string;
   desc: string;
-  status: 'pending' | 'running' | 'completed' | 'paused' | 'failed';
+  status?: 'pending' | 'running' | 'completed' | 'paused' | 'failed';
 }
 
 interface Props {

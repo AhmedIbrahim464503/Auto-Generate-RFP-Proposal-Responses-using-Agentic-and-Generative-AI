@@ -312,8 +312,8 @@ export default function RequirementExplorer({ documentId }: RequirementExplorerP
 
               {/* Requirements List */}
               <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
-                {filteredRequirements.map((req) => (
-                  <div key={req.id} className="border border-slate-800/80 bg-slate-950/40 rounded-lg p-4 hover:border-slate-700 transition">
+                {filteredRequirements.map((req, idx) => (
+                  <div key={req.id || `req-${idx}`} className="border border-slate-800/80 bg-slate-950/40 rounded-lg p-4 hover:border-slate-700 transition">
                     <div className="flex justify-between items-start gap-2">
                       <div className="flex items-center gap-2 flex-wrap">
                         <span className="text-xs font-semibold text-slate-300">{req.title}</span>
@@ -340,8 +340,8 @@ export default function RequirementExplorer({ documentId }: RequirementExplorerP
                     <div className="flex justify-between items-center mt-3 pt-2 border-t border-slate-900/60">
                       <div className="flex gap-1.5 items-center">
                         <span className="text-[10px] text-slate-500">Assigned:</span>
-                        {req.assigned_departments.map((dept) => (
-                          <span key={dept} className="text-[9px] bg-slate-900 text-slate-400 border border-slate-800 px-1.5 py-0.5 rounded">
+                        {req.assigned_departments.map((dept, dIdx) => (
+                          <span key={dIdx} className="text-[9px] bg-slate-900 text-slate-400 border border-slate-800 px-1.5 py-0.5 rounded">
                             {dept}
                           </span>
                         ))}
@@ -360,20 +360,25 @@ export default function RequirementExplorer({ documentId }: RequirementExplorerP
           {/* Deliverables Tab */}
           {activeTab === "deliverables" && (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[500px] overflow-y-auto pr-2">
-              {deliverables.map((del) => (
-                <div key={del.id} className="border border-slate-800 bg-slate-950/40 rounded-lg p-4 flex flex-col justify-between">
+              {deliverables.map((del, idx) => (
+                <div key={del.id || `del-${idx}`} className="border border-slate-800 bg-slate-950/40 rounded-lg p-4 flex flex-col justify-between hover:border-slate-700 transition">
                   <div>
                     <div className="flex justify-between items-center">
-                      <span className="text-xs font-bold text-slate-300">Deliverable</span>
-                      <span className="text-[10px] text-slate-500 bg-slate-900 px-2 py-0.5 rounded">{del.responsible_department}</span>
+                      <div className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-slate-300">Deliverable</span>
+                        <span className={`text-[9px] px-1.5 py-0.5 rounded font-medium border ${del.mandatory ? "bg-amber-500/10 text-amber-400 border-amber-500/20" : "bg-slate-800 text-slate-400 border-slate-700"}`}>
+                          {del.mandatory ? "Mandatory" : "Optional"}
+                        </span>
+                      </div>
+                      <span className="text-[10px] text-slate-400 bg-slate-900 border border-slate-800 px-2 py-0.5 rounded font-medium">{del.responsible_department || "Technical"}</span>
                     </div>
-                    <p className="text-xs text-slate-400 mt-2 leading-relaxed">{del.description}</p>
+                    <p className="text-xs text-slate-300 mt-2 leading-relaxed">{del.description}</p>
                   </div>
                   <div className="mt-4 pt-2 border-t border-slate-900 flex justify-between items-center text-[10px]">
                     <div className="text-slate-500">
-                      Due Stage: <span className="text-slate-300">{del.deadline}</span>
+                      Due Stage: <span className="text-teal-300 font-semibold">{del.due_stage || del.deadline || "Specified in Contract"}</span>
                     </div>
-                    <div className="text-teal-400 font-semibold">{(del.confidence * 100).toFixed(0)}% Confidence</div>
+                    <div className="text-cyan-400 font-semibold">{(del.confidence * 100).toFixed(0)}% Confidence</div>
                   </div>
                 </div>
               ))}
@@ -383,8 +388,8 @@ export default function RequirementExplorer({ documentId }: RequirementExplorerP
           {/* Evaluation Tab */}
           {activeTab === "evaluation" && (
             <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
-              {evaluations.map((eva) => (
-                <div key={eva.id} className="border border-slate-800 bg-slate-950/40 rounded-lg p-4">
+              {evaluations.map((eva, idx) => (
+                <div key={eva.id || `eva-${idx}`} className="border border-slate-800 bg-slate-950/40 rounded-lg p-4 hover:border-slate-700 transition">
                   <div className="flex justify-between items-center border-b border-slate-900 pb-2 mb-2">
                     <span className="text-xs font-bold text-slate-300">{eva.factor || "General Evaluation Criteria"}</span>
                     {eva.weight && <span className="text-xs text-teal-400 font-semibold">Weight: {eva.weight}</span>}
@@ -396,7 +401,7 @@ export default function RequirementExplorer({ documentId }: RequirementExplorerP
                       {eva.scoring_methodology && (
                         <>
                           <span className="text-slate-500 block text-[10px] mt-2">Scoring Methodology:</span>
-                          <p>{eva.scoring_methodology}</p>
+                          <p className="text-slate-300">{eva.scoring_methodology}</p>
                         </>
                       )}
                     </div>
@@ -404,19 +409,19 @@ export default function RequirementExplorer({ documentId }: RequirementExplorerP
                       {eva.ranking_criteria && (
                         <div>
                           <span className="text-[10px] text-slate-500 block">Ranking Criteria:</span>
-                          <p>{eva.ranking_criteria}</p>
+                          <p className="text-slate-300">{eva.ranking_criteria}</p>
                         </div>
                       )}
                       {eva.preferred_experience && (
                         <div>
                           <span className="text-[10px] text-slate-500 block">Preferred Experience:</span>
-                          <p>{eva.preferred_experience}</p>
+                          <p className="text-slate-300">{eva.preferred_experience}</p>
                         </div>
                       )}
                       {eva.preferred_certifications && (
                         <div>
                           <span className="text-[10px] text-slate-500 block">Preferred Certifications:</span>
-                          <p>{eva.preferred_certifications}</p>
+                          <p className="text-slate-300">{eva.preferred_certifications}</p>
                         </div>
                       )}
                     </div>
@@ -429,19 +434,19 @@ export default function RequirementExplorer({ documentId }: RequirementExplorerP
           {/* Submission Tab */}
           {activeTab === "submission" && (
             <div className="space-y-4 max-h-[500px] overflow-y-auto pr-2">
-              {submissions.map((sub) => (
-                <div key={sub.id} className="border border-slate-800 bg-slate-950/40 rounded-lg p-4 text-xs text-slate-400">
+              {submissions.map((sub, idx) => (
+                <div key={sub.id || `sub-${idx}`} className="border border-slate-800 bg-slate-950/40 rounded-lg p-4 text-xs text-slate-400 hover:border-slate-700 transition">
                   <span className="text-xs font-bold text-slate-300 block border-b border-slate-900 pb-2 mb-2">Submission Protocol</span>
                   <p className="text-slate-300 leading-relaxed mb-4">{sub.instruction_text}</p>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                     <div>
                       <span className="text-slate-500 block text-[10px]">Method:</span>
-                      <span className="text-slate-300">{sub.submission_method}</span>
+                      <span className="text-slate-300 font-semibold">{sub.submission_method}</span>
                     </div>
                     {sub.portal && (
                       <div>
                         <span className="text-slate-500 block text-[10px]">Portal:</span>
-                        <a href={sub.portal} target="_blank" rel="noreferrer" className="text-cyan-400 underline">{sub.portal}</a>
+                        <a href={sub.portal} target="_blank" rel="noreferrer" className="text-cyan-400 underline truncate block">{sub.portal}</a>
                       </div>
                     )}
                     {sub.file_naming_rules && (
@@ -477,7 +482,7 @@ export default function RequirementExplorer({ documentId }: RequirementExplorerP
                     {sub.late_policy && (
                       <div>
                         <span className="text-slate-500 block text-[10px]">Late Policy:</span>
-                        <span className="text-rose-400">{sub.late_policy}</span>
+                        <span className="text-rose-400 font-medium">{sub.late_policy}</span>
                       </div>
                     )}
                   </div>
@@ -489,8 +494,8 @@ export default function RequirementExplorer({ documentId }: RequirementExplorerP
           {/* Compliance Tab */}
           {activeTab === "compliance" && (
             <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
-              {compliance.map((com) => (
-                <div key={com.id} className="border border-slate-800 bg-slate-950/40 rounded-lg p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+              {compliance.map((com, idx) => (
+                <div key={com.id || `com-${idx}`} className="border border-slate-800 bg-slate-950/40 rounded-lg p-4 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:border-slate-700 transition">
                   <div>
                     <div className="flex items-center gap-2">
                       <span className="text-xs font-bold text-slate-300">{com.name}</span>
@@ -502,7 +507,7 @@ export default function RequirementExplorer({ documentId }: RequirementExplorerP
                     </div>
                     {com.evidence_required && (
                       <p className="text-xs text-slate-400 mt-1">
-                        <span className="text-slate-500">Required Evidence:</span> {com.evidence_required}
+                        <span className="text-slate-500">Required Evidence:</span> <span className="text-slate-300">{com.evidence_required}</span>
                       </p>
                     )}
                   </div>
@@ -528,15 +533,15 @@ export default function RequirementExplorer({ documentId }: RequirementExplorerP
               <div>
                 <h3 className="text-xs font-bold text-rose-400 mb-3 border-b border-rose-500/20 pb-2">Identified Risks</h3>
                 <div className="space-y-3">
-                  {risks.map((risk) => (
-                    <div key={risk.id} className="border border-rose-950/40 bg-rose-950/5 rounded-lg p-4">
+                  {risks.map((risk, idx) => (
+                    <div key={risk.id || `risk-${idx}`} className="border border-rose-950/40 bg-rose-950/5 rounded-lg p-4 hover:border-rose-800/40 transition">
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-xs font-bold text-rose-300">RFP Risk</span>
                         <div className="flex gap-2">
-                          <span className="text-[9px] bg-rose-500/20 text-rose-300 border border-rose-500/30 px-1.5 py-0.5 rounded">
+                          <span className="text-[9px] bg-rose-500/20 text-rose-300 border border-rose-500/30 px-1.5 py-0.5 rounded font-medium">
                             Severity: {risk.severity}
                           </span>
-                          <span className="text-[9px] bg-rose-500/20 text-rose-300 border border-rose-500/30 px-1.5 py-0.5 rounded">
+                          <span className="text-[9px] bg-rose-500/20 text-rose-300 border border-rose-500/30 px-1.5 py-0.5 rounded font-medium">
                             Likelihood: {risk.likelihood}
                           </span>
                         </div>
@@ -545,7 +550,7 @@ export default function RequirementExplorer({ documentId }: RequirementExplorerP
                       {risk.mitigation_suggestion && (
                         <div className="mt-3 pt-2 border-t border-rose-950/20 text-xs text-slate-400">
                           <span className="text-rose-400 font-semibold block text-[10px]">Mitigation Suggestion:</span>
-                          <p>{risk.mitigation_suggestion}</p>
+                          <p className="text-slate-300">{risk.mitigation_suggestion}</p>
                         </div>
                       )}
                     </div>
@@ -557,26 +562,26 @@ export default function RequirementExplorer({ documentId }: RequirementExplorerP
               <div>
                 <h3 className="text-xs font-bold text-cyan-400 mb-3 border-b border-cyan-500/20 pb-2">Suggested Clarification Questions</h3>
                 <div className="space-y-3">
-                  {clarifications.map((clar) => (
-                    <div key={clar.id} className="border border-cyan-950/40 bg-cyan-950/5 rounded-lg p-4">
+                  {clarifications.map((clar, idx) => (
+                    <div key={clar.id || `clar-${idx}`} className="border border-cyan-950/40 bg-cyan-950/5 rounded-lg p-4 hover:border-cyan-800/40 transition">
                       <div className="flex justify-between items-center mb-2">
                         <span className="text-xs font-bold text-cyan-300">Question</span>
-                        <span className="text-[9px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-1.5 py-0.5 rounded">
+                        <span className="text-[9px] bg-cyan-500/20 text-cyan-300 border border-cyan-500/30 px-1.5 py-0.5 rounded font-medium">
                           Priority: {clar.priority}
                         </span>
                       </div>
-                      <p className="text-xs text-slate-300 leading-relaxed font-medium">"{clar.question_text}"</p>
+                      <p className="text-xs text-slate-200 leading-relaxed font-medium">&quot;{clar.question_text}&quot;</p>
                       <div className="mt-3 pt-2 border-t border-cyan-950/20 text-xs text-slate-400 space-y-2">
                         {clar.reason && (
                           <div>
                             <span className="text-cyan-400 font-semibold block text-[10px]">Reasoning:</span>
-                            <p>{clar.reason}</p>
+                            <p className="text-slate-300">{clar.reason}</p>
                           </div>
                         )}
                         {clar.business_impact && (
                           <div>
                             <span className="text-cyan-400 font-semibold block text-[10px]">Business Impact:</span>
-                            <p>{clar.business_impact}</p>
+                            <p className="text-slate-300">{clar.business_impact}</p>
                           </div>
                         )}
                       </div>
@@ -589,76 +594,113 @@ export default function RequirementExplorer({ documentId }: RequirementExplorerP
 
           {/* Graph Tab */}
           {activeTab === "graph" && (
-            <div className="border border-slate-800 bg-slate-950/40 rounded-xl p-4">
-              <span className="text-xs font-bold text-slate-300 block border-b border-slate-900 pb-2 mb-2">RFP Relationship Network Map</span>
-              <div className="h-[400px] flex items-center justify-center relative overflow-hidden bg-slate-950/80 rounded-lg">
-                <svg className="absolute inset-0 w-full h-full">
-                  {/* Edges */}
-                  {graphData.edges.map((edge) => {
-                    const srcIndex = graphData.nodes.findIndex((n) => n.id === edge.source);
-                    const tgtIndex = graphData.nodes.findIndex((n) => n.id === edge.target);
-                    if (srcIndex === -1 || tgtIndex === -1) return null;
-                    
-                    const x1 = 150 + (srcIndex % 3) * 220;
-                    const y1 = 100 + Math.floor(srcIndex / 3) * 110;
-                    const x2 = 150 + (tgtIndex % 3) * 220;
-                    const y2 = 100 + Math.floor(tgtIndex / 3) * 110;
+            <div className="border border-slate-800 bg-slate-950/60 rounded-xl p-4">
+              <span className="text-xs font-bold text-slate-300 block border-b border-slate-900 pb-2 mb-3 flex items-center justify-between">
+                <span>RFP Entity Relationship & Linkage Network</span>
+                <span className="text-[10px] text-slate-500 font-normal">Showing nodes & directed relationship dependencies</span>
+              </span>
+              <div className="h-[460px] overflow-auto bg-slate-950 rounded-lg border border-slate-900/80 relative shadow-inner p-4">
+                {(() => {
+                  const cols = 3;
+                  const nodeW = 190;
+                  const nodeH = 65;
+                  const gapX = 260;
+                  const gapY = 150;
+                  const offsetX = 130;
+                  const offsetY = 70;
 
-                    return (
-                      <g key={edge.id}>
-                        <line
-                          x1={x1}
-                          y1={y1}
-                          x2={x2}
-                          y2={y2}
-                          stroke="#1e293b"
-                          strokeWidth="1.5"
-                          strokeDasharray="4 2"
-                        />
-                        <text
-                          x={(x1 + x2) / 2}
-                          y={(y1 + y2) / 2 - 4}
-                          fill="#06b6d4"
-                          fontSize="8"
-                          textAnchor="middle"
-                          className="bg-slate-950 px-1 font-semibold"
-                        >
-                          {edge.relationship}
-                        </text>
-                      </g>
-                    );
-                  })}
-                </svg>
-
-                {/* Nodes */}
-                <div className="absolute inset-0 flex flex-wrap items-center justify-around p-8 gap-4 pointer-events-none">
-                  {graphData.nodes.map((node, index) => {
-                    const getNodeColor = (type: string) => {
-                      switch (type) {
-                        case "requirement": return "border-teal-500 bg-teal-950/80 text-teal-300";
-                        case "deliverable": return "border-amber-500 bg-amber-950/80 text-amber-300";
-                        case "risk": return "border-rose-500 bg-rose-950/80 text-rose-300";
-                        case "compliance_obligation": return "border-indigo-500 bg-indigo-950/80 text-indigo-300";
-                        default: return "border-slate-600 bg-slate-900/80 text-slate-300";
-                      }
+                  const positionedNodes = graphData.nodes.map((node, index) => {
+                    const col = index % cols;
+                    const row = Math.floor(index / cols);
+                    return {
+                      ...node,
+                      x: offsetX + col * gapX,
+                      y: offsetY + row * gapY,
                     };
+                  });
 
-                    return (
-                      <div
-                        key={node.id}
-                        className={`pointer-events-auto border rounded-xl px-3 py-2 text-center shadow-lg transition-transform duration-300 hover:scale-105 select-none ${getNodeColor(node.type)}`}
-                        style={{
-                          width: "160px",
-                          fontSize: "10px",
-                          fontWeight: "600"
-                        }}
-                      >
-                        <span className="uppercase text-[7px] text-slate-400 block mb-1">{node.type}</span>
-                        <div className="truncate">{node.label}</div>
-                      </div>
-                    );
-                  })}
-                </div>
+                  const canvasW = Math.max(760, offsetX * 2 + (cols - 1) * gapX);
+                  const canvasH = Math.max(440, offsetY * 2 + Math.floor(Math.max(0, graphData.nodes.length - 1) / cols) * gapY);
+
+                  const getNodeStyle = (type: string) => {
+                    switch (type) {
+                      case "requirement": return "border-teal-500/80 bg-teal-950/90 text-teal-200 shadow-teal-900/30";
+                      case "deliverable": return "border-amber-500/80 bg-amber-950/90 text-amber-200 shadow-amber-900/30";
+                      case "risk": return "border-rose-500/80 bg-rose-950/90 text-rose-200 shadow-rose-900/30";
+                      case "compliance_obligation": return "border-indigo-500/80 bg-indigo-950/90 text-indigo-200 shadow-indigo-900/30";
+                      case "clarification_question": return "border-cyan-500/80 bg-cyan-950/90 text-cyan-200 shadow-cyan-900/30";
+                      default: return "border-slate-600 bg-slate-900/90 text-slate-200 shadow-slate-900/30";
+                    }
+                  };
+
+                  return (
+                    <div style={{ width: `${canvasW}px`, height: `${canvasH}px` }} className="relative mx-auto">
+                      <svg className="absolute inset-0 w-full h-full pointer-events-none">
+                        <defs>
+                          <marker id="arrow" viewBox="0 0 10 10" refX="22" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 1 L 10 5 L 0 9 z" fill="#06b6d4" />
+                          </marker>
+                        </defs>
+                        {graphData.edges.map((edge, edgeIdx) => {
+                          const srcNode = positionedNodes.find((n) => n.id === edge.source);
+                          const tgtNode = positionedNodes.find((n) => n.id === edge.target);
+                          if (!srcNode || !tgtNode) return null;
+
+                          return (
+                            <g key={`${edge.id || edgeIdx}`}>
+                              <line
+                                x1={srcNode.x}
+                                y1={srcNode.y}
+                                x2={tgtNode.x}
+                                y2={tgtNode.y}
+                                stroke="#0e7490"
+                                strokeWidth="2"
+                                strokeDasharray="5 3"
+                                markerEnd="url(#arrow)"
+                              />
+                              <rect
+                                x={(srcNode.x + tgtNode.x) / 2 - 38}
+                                y={(srcNode.y + tgtNode.y) / 2 - 10}
+                                width="76"
+                                height="18"
+                                rx="4"
+                                fill="#083344"
+                                stroke="#06b6d4"
+                                strokeWidth="1"
+                              />
+                              <text
+                                x={(srcNode.x + tgtNode.x) / 2}
+                                y={(srcNode.y + tgtNode.y) / 2 + 3}
+                                fill="#a5f3fc"
+                                fontSize="9"
+                                textAnchor="middle"
+                                fontWeight="bold"
+                              >
+                                {edge.relationship}
+                              </text>
+                            </g>
+                          );
+                        })}
+                      </svg>
+
+                      {positionedNodes.map((node, nodeIdx) => (
+                        <div
+                          key={node.id || `node-${nodeIdx}`}
+                          className={`absolute border rounded-xl p-2.5 text-center shadow-lg transition-transform duration-300 hover:scale-105 select-none flex flex-col justify-center ${getNodeStyle(node.type)}`}
+                          style={{
+                            left: `${node.x - nodeW / 2}px`,
+                            top: `${node.y - nodeH / 2}px`,
+                            width: `${nodeW}px`,
+                            height: `${nodeH}px`,
+                          }}
+                        >
+                          <span className="uppercase tracking-wider text-[8px] opacity-75 block font-bold mb-0.5">{node.type.replace("_", " ")}</span>
+                          <div className="text-[11px] font-semibold truncate leading-tight" title={node.label}>{node.label}</div>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
               </div>
             </div>
           )}
