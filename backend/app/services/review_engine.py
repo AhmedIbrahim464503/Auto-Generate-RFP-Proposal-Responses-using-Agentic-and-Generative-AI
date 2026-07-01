@@ -2,7 +2,7 @@ import os
 import time
 import json
 from typing import Dict, Any, List, Optional
-import google.generativeai as genai
+from groq import Groq
 from backend.app.core.config import settings
 from backend.app.core.logger import logger
 from backend.app.schemas.review import DepartmentReviewOutput
@@ -31,38 +31,66 @@ PROMPT_REGISTRY = {
 
 class ReviewEngineService:
     def __init__(self):
-        self.api_key = settings.GEMINI_API_KEY
-        self.model_name = "gemini-2.5-flash"
+        self.api_key = settings.GROQ_API_KEY
+        self.model_name = "llama-3.3-70b-versatile"
         self.prompt_version = "v1.0"
 
         if self.api_key and self.api_key != "your-api-key-here":
-            genai.configure(api_key=self.api_key)
-            self.model = genai.GenerativeModel(self.model_name)
-            logger.info(f"ReviewEngineService initialized with Gemini Model: {self.model_name}")
+            self.client = Groq(api_key=self.api_key)
+            logger.info(f"ReviewEngineService initialized with Groq Model: {self.model_name}")
         else:
-            self.model = None
-            logger.warning("ReviewEngineService: GEMINI_API_KEY not found. Fallback mockup review engine active.")
+            self.client = None
+            logger.warning("ReviewEngineService: GROQ_API_KEY not found. Fallback mockup review engine active.")
 
-    def run_inference_with_retry(self, prompt: str, system_instruction: str, schema: Any, retries: int = 3) -> Any:
-        if not self.model:
+    def _clean_json(self, text: str) -> str:
+        if not text:
+            return ""
+        text = text.strip()
+        if text.startswith("```json"):
+            text = text[7:]
+        elif text.startswith("```"):
+            text = text[3:]
+        if text.endswith("```"):
+            text = text[:-3]
+        text = text.strip()
+        first_brace = text.find('{')
+        if first_brace != -1:
+            last_brace = text.rfind('}')
+            if last_brace != -1:
+                text = text[first_brace:last_brace+1]
+        return text
+
+    def run_inference_with_retry(self, prompt: str, system_instruction: str, schema: Any, retries: int = 3) -> Optional[str]:
+        if not self.client:
             return None
 
-        for attempt in range(retries):
-            try:
-                response = self.model.generate_content(
-                    prompt,
-                    generation_config=genai.GenerationConfig(
-                        response_mime_type="application/json",
-                        response_schema=schema
-                    ),
-                    # Pass the system instruction in contents or configuration if supported by version
-                )
-                return response
-            except Exception as e:
-                logger.warn(f"Gemini Review Engine attempt {attempt+1} failed: {str(e)}")
-                if attempt == retries - 1:
-                    raise e
-                time.sleep(2 ** attempt)
+        schema_hint = 'You MUST return ONLY valid JSON object with keys: "decision", "confidence", "reasoning", "evidence", "findings", "risks", "assumptions", "missing_information", "clarification_questions", "recommendations", "escalation_required".'
+        full_sys = f"{system_instruction}\n\n{schema_hint}"
+        models_to_try = [self.model_name, "llama-3.1-8b-instant", "mixtral-8x7b-32768"]
+
+        for model in models_to_try:
+            for attempt in range(retries):
+                try:
+                    response = self.client.chat.completions.create(
+                        model=model,
+                        messages=[
+                            {"role": "system", "content": full_sys},
+                            {"role": "user", "content": prompt}
+                        ],
+                        temperature=0.3,
+                        max_tokens=4096,
+                        response_format={"type": "json_object"}
+                    )
+                    return self._clean_json(response.choices[0].message.content)
+                except Exception as e:
+                    err_str = str(e)
+                    logger.warning(f"Groq API attempt {attempt+1} with model {model} failed: {err_str}")
+                    if "429" in err_str or "rate_limit" in err_str.lower():
+                        logger.warning(f"Rate limit hit on {model}, falling back to next available Groq model.")
+                        break
+                    if attempt == retries - 1 and model == models_to_try[-1]:
+                        return None
+                    time.sleep(1)
 
     def run_financial_review(self, doc_text: str, payment_terms: str, insurance_limit: float) -> DepartmentReviewOutput:
         # 1. Apply SPS Hardcoded Business Rules
@@ -102,7 +130,7 @@ class ReviewEngineService:
             return self._mock_financial_review(rule_decision, escalation_required, reasoning_notes)
 
         try:
-            data = json.loads(response.text)
+            data = json.loads(response)
             out = DepartmentReviewOutput(**data)
             # Override decision if SPS hardcoded rules mandate a NO_GO or escalation
             if rule_decision == "NO_GO":
@@ -124,7 +152,7 @@ class ReviewEngineService:
         if not response:
             return self._mock_legal_review()
         try:
-            data = json.loads(response.text)
+            data = json.loads(response)
             return DepartmentReviewOutput(**data)
         except Exception as e:
             logger.error(f"Failed to parse Legal Review response: {str(e)}")
@@ -141,7 +169,7 @@ class ReviewEngineService:
         if not response:
             return self._mock_operations_review()
         try:
-            data = json.loads(response.text)
+            data = json.loads(response)
             return DepartmentReviewOutput(**data)
         except Exception as e:
             logger.error(f"Failed to parse Operations Review response: {str(e)}")
@@ -158,7 +186,7 @@ class ReviewEngineService:
         if not response:
             return self._mock_technical_review()
         try:
-            data = json.loads(response.text)
+            data = json.loads(response)
             return DepartmentReviewOutput(**data)
         except Exception as e:
             logger.error(f"Failed to parse Technical Review response: {str(e)}")
